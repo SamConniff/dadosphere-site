@@ -1,0 +1,712 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>THE DADOSPHERE</title>
+<meta name="robots" content="index, follow">
+<meta name="description" content="Ask.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=JetBrains+Mono:wght@400;700;800&display=swap" rel="stylesheet">
+<!-- Privacy-friendly analytics by Plausible -->
+<script async src="https://plausible.io/js/pa-aOP9Xw_iGjaMVPpsV9FYn.js"></script>
+<script>
+  window.plausible=window.plausible||function(){(plausible.q=plausible.q||[]).push(arguments)},plausible.init=plausible.init||function(i){plausible.o=i||{}};
+  plausible.init()
+</script>
+<style>
+  :root{--g:#FF2D87;--mono:'IBM Plex Mono',monospace;--monb:'JetBrains Mono',monospace;
+        --ink0:#fff;--ink1:#999;--ink2:#888;--ink3:#555;--ink4:#2a2a2a}
+  /* accent rule: pink, bold in hue, minimal in area — underscores and underlines only, never blocks or coloured text */
+  /* grey rule: six tokens only; --ink2 is the floor for anything clickable — see DESIGN_SYSTEM.md */
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:#000;color:#fff;font-family:var(--mono);line-height:1.6;min-height:100vh;display:flex;flex-direction:column}
+  ::selection{background:var(--g);color:#000}
+  .cursor{display:inline-block;width:.6em;height:2px;background:var(--g);vertical-align:baseline;margin-left:3px;animation:blink 1.05s steps(1) infinite}
+  @keyframes blink{50%{opacity:0}}
+  a{color:var(--ink2)}
+  .u{text-decoration:underline;text-decoration-color:var(--g);text-decoration-thickness:2px;text-underline-offset:5px}
+
+  /* questions hero — public, above the gate */
+  #questions-hero{padding:54px 26px 44px;border-bottom:1px solid var(--ink4)}
+  #questions-hero .qs-wrap{width:min(760px,100%);margin:0 auto}
+  #questions-hero .qs-title{font-family:var(--monb);font-weight:800;font-size:clamp(22px,4.2vw,34px);margin-bottom:40px;line-height:1.3}
+  #questions-hero .qs-title em{font-weight:400;color:var(--ink1);font-style:normal}
+  .q-item{display:flex;gap:14px;margin-bottom:22px;align-items:baseline}
+  .q-item .qn{font-family:var(--monb);font-weight:700;font-size:13px;color:var(--g);min-width:22px;padding-top:2px}
+  .q-item .qt{color:var(--ink1);font-size:clamp(14px,2vw,16px);line-height:1.65}
+  .q-ctarow{margin-top:36px;display:flex;gap:24px;flex-wrap:wrap;align-items:baseline}
+  .q-cta{font-size:14px;color:#fff;text-decoration:underline;text-decoration-color:var(--g);text-decoration-thickness:2px;text-underline-offset:5px;cursor:pointer}
+  .q-cta:hover{color:#fff}
+  .q-cta.sec{color:var(--ink1)}
+  .q-cta.sec:hover{color:#fff}
+
+  /* inline gate */
+  #inline-gate{padding:44px 26px 50px}
+  #inline-gate .igate-wrap{width:min(760px,100%);margin:0 auto}
+  #inline-gate .igate-label{font-family:var(--monb);font-weight:800;font-size:clamp(20px,3.5vw,30px);margin-bottom:28px}
+  #inline-gate .irow{display:flex;gap:8px;align-items:baseline;font-size:16px}
+  #inline-gate .p{color:var(--ink2)}
+  #ipw{background:transparent;border:none;outline:none;border-bottom:1px solid var(--ink4);color:#fff;font-family:var(--mono);font-size:16px;flex:1;padding-bottom:4px}
+  #ipw:focus{border-bottom-color:var(--ink2)}
+  #igateerr{color:var(--ink3);font-size:12.5px;margin-top:14px;min-height:18px}
+
+  /* chrome: minimal top + bottom */
+  .top{display:flex;justify-content:space-between;padding:20px 26px;font-size:11.5px;color:var(--ink3);letter-spacing:.1em}
+  .top .brand{color:var(--ink1)}
+  .top a{color:var(--ink3)}
+  .top a:hover{color:var(--ink1)}
+  .tabs{display:flex;justify-content:center;gap:0;padding:24px 26px 28px;font-size:12.5px;color:var(--ink2);flex-wrap:wrap}
+  .tabs span{cursor:pointer;user-select:none;padding:0 4px}
+  .tabs span:hover{color:#fff;text-decoration:underline;text-decoration-color:var(--g);text-decoration-thickness:2px;text-underline-offset:6px}
+  .tabs i{font-style:normal;color:var(--ink4);padding:0 8px}
+  .stock{text-align:center;padding:0 26px 22px;font-size:11.5px;color:var(--ink2)}
+  .stock span{cursor:pointer;user-select:none}
+  .stock span:hover{color:#fff;text-decoration:underline;text-decoration-color:var(--g);text-decoration-thickness:2px;text-underline-offset:5px}
+
+  /* the one thing */
+  main{flex:1;display:flex;align-items:center;justify-content:center;padding:0 26px}
+  .one{width:min(760px,100%)}
+  .ask-head{font-family:var(--monb);font-weight:800;font-size:clamp(22px,4.2vw,36px);margin-bottom:8px}
+  .ask-head em{font-weight:400;color:var(--ink1)}
+  .ask-sub{color:var(--ink2);font-size:12.5px;margin-bottom:34px}
+  .ask-sub b{color:var(--ink0);font-weight:600}
+  .askline{display:flex;align-items:baseline;gap:12px;font-size:clamp(18px,2.6vw,24px)}
+  .askline .p{color:#888}
+  #ask{background:transparent;border:none;outline:none;color:#fff;font-family:var(--mono);font-size:clamp(18px,2.6vw,24px);flex:1}
+  #ask::placeholder{color:var(--ink3);transition:opacity .8s}
+  /* the asking path sits in its own grey (--ink1), one step brighter than examples — it's a door, not a hint */
+  .frame-toggle{margin-top:22px;font-size:12.5px;color:var(--ink1);cursor:pointer;user-select:none;width:fit-content}
+  .frame-toggle:hover{color:#fff;text-decoration:underline;text-decoration-color:var(--g);text-decoration-thickness:2px;text-underline-offset:5px}
+  #framer{display:none;margin-top:18px}
+  #framer input{display:block;width:100%;background:transparent;border:none;outline:none;border-bottom:1px solid var(--ink4);color:#fff;font-family:var(--mono);font-size:15px;padding:9px 0;margin-bottom:4px}
+  #framer input:focus{border-bottom-color:var(--ink2)}
+  #framer input::placeholder{color:var(--ink3)}
+  #framer .go{margin-top:16px;font-size:13px;color:#fff;cursor:pointer;user-select:none;width:fit-content;text-decoration:underline;text-decoration-color:var(--g);text-decoration-thickness:2px;text-underline-offset:5px}
+
+  /* response — the answer is the product: display family, bold */
+  #res{margin-top:54px;min-height:120px}
+  /* the prompting question rides above the answer — adjacent honesty made visible */
+  #res .q{color:var(--ink1);font-size:13px;line-height:1.6;margin-bottom:14px;max-width:700px;white-space:pre-line;overflow-wrap:break-word}
+  #res .a{font-family:var(--monb);font-weight:700;font-size:clamp(17px,2.3vw,22px);line-height:1.6;max-width:700px}
+  #res .h{color:var(--ink3);font-size:12.5px;margin-top:14px}
+  #res .again{color:var(--ink2);font-size:12.5px;margin-top:22px;cursor:pointer;user-select:none;width:fit-content}
+  #res .again span:hover{color:#fff}
+
+  /* panels — opaque, always */
+  .panel{display:none;position:fixed;inset:0;background:#000;z-index:50;overflow-y:auto}
+  .panel .pin{max-width:880px;margin:0 auto;padding:70px 26px 90px}
+  .panel .x{position:fixed;top:20px;right:26px;color:var(--ink2);cursor:pointer;font-size:14px;user-select:none}
+  .panel .x:hover{color:#fff}
+  .panel h2{font-family:var(--monb);font-weight:800;font-size:clamp(20px,3vw,30px);margin-bottom:26px}
+  .panel p{color:var(--ink1);font-size:14.5px;max-width:560px;margin-bottom:14px}
+  .panel .dim{color:var(--ink3);font-size:12.5px}
+  .panel h3{font-family:var(--mono);font-weight:600;font-size:14px;color:var(--ink0);margin:30px 0 10px}
+  .promises{color:var(--ink1);font-size:14.5px;line-height:2.1;max-width:560px}
+
+  /* intake: ask the men */
+  #qform input,#qform textarea{display:block;width:100%;max-width:560px;background:transparent;border:none;outline:none;border-bottom:1px solid var(--ink4);color:#fff;font-family:var(--mono);font-size:15px;padding:11px 0;margin-bottom:6px;resize:none}
+  #qform input:focus,#qform textarea:focus{border-bottom-color:var(--ink2)}
+  #qform input::placeholder,#qform textarea::placeholder{color:var(--ink3)}
+  #qform .go{margin-top:18px;font-size:13.5px;color:#fff;cursor:pointer;user-select:none;width:fit-content;padding:8px 8px 8px 0;text-decoration:underline;text-decoration-color:var(--g);text-decoration-thickness:2px;text-underline-offset:5px}
+  #qmsg{color:var(--ink2);font-size:13px;margin-top:16px;min-height:20px;max-width:560px}
+  .hpf{position:absolute;left:-9999px;opacity:0;height:0;overflow:hidden}
+
+  /* gallery */
+  .legend{color:var(--ink3);font-size:12px;margin-top:12px}
+  .chips{display:flex;flex-wrap:wrap;gap:6px 16px;margin:22px 0 8px}
+  .chip{font-size:12.5px;color:var(--ink2);cursor:pointer;user-select:none;padding-bottom:3px}
+  .chip::before{content:'['}
+  .chip::after{content:']'}
+  .chip:hover{color:#fff}
+  .chip.on{color:#fff;border-bottom:2px solid var(--g)}
+  #gsearch{background:transparent;border:none;outline:none;border-bottom:1px solid var(--ink4);color:#fff;font-family:var(--mono);font-size:14px;padding:8px 0;width:100%;max-width:420px;margin-top:10px}
+  #gsearch:focus{border-bottom-color:var(--ink2)}
+  #gsearch::placeholder{color:var(--ink3)}
+  .cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px;margin-top:28px}
+  .card{border:1px solid var(--ink4);border-radius:6px;padding:20px;display:flex;flex-direction:column;justify-content:space-between}
+  .card .qq{color:var(--ink2);font-size:12px;line-height:1.5;margin-bottom:10px;white-space:pre-line;overflow-wrap:break-word}
+  .card .aa{color:#fff;font-size:14.5px;line-height:1.55;margin-bottom:12px;overflow-wrap:break-word}
+  .card .hm{color:var(--ink3);font-size:11px;border-top:1px solid var(--ink4);padding-top:9px}
+  .more{margin-top:24px;color:var(--ink2);font-size:13px;cursor:pointer;user-select:none;width:fit-content}
+  .more:hover{color:#fff}
+
+  .siglist{margin-top:30px;color:var(--ink1);font-size:14.5px;line-height:2.2}
+  .siglist b{color:#fff;font-weight:500}
+
+  /* inline contribution form */
+  .contrib-form{margin-top:28px;border-top:1px solid var(--ink4);padding-top:20px}
+  .contrib-form .cq{color:var(--ink1);font-size:13px;margin-bottom:14px;line-height:1.6}
+  .contrib-form textarea{background:transparent;border:none;outline:none;border-bottom:1px solid var(--ink4);color:#fff;font-family:var(--mono);font-size:14px;width:100%;max-width:700px;padding-bottom:6px;resize:none;display:block}
+  .contrib-form textarea:focus{border-bottom-color:var(--ink2)}
+  .contrib-form textarea::placeholder{color:var(--ink3)}
+  .contrib-form .cgo{margin-top:14px;font-size:13px;color:#fff;cursor:pointer;user-select:none;width:fit-content;text-decoration:underline;text-decoration-color:var(--g);text-decoration-thickness:2px;text-underline-offset:5px}
+  .contrib-form .cmsg{color:var(--ink2);font-size:12.5px;margin-top:12px;min-height:18px}
+
+  /* footer note */
+  .footer-note{text-align:center;padding:14px 26px 24px;font-size:11px;color:var(--ink3);letter-spacing:.03em}
+</style>
+</head>
+<body>
+
+<div class="top"><span class="brand">THE DADOSPHERE <span style="color:var(--g)">_</span> beta</span><span><a href="mailto:sam@thedadosphere.com?subject=feedback" style="text-decoration:none">tell us what's wrong</a> &nbsp;·&nbsp; <span id="clock">--:--</span></span></div>
+
+<!-- five questions — public, no gate -->
+<section id="questions-hero">
+  <div class="qs-wrap">
+    <div class="qs-title">Five questions.<br><em>509 men answered.</em></div>
+
+    <div class="q-item"><span class="qn">01</span><span class="qt">In the last 12 months, has there been something on your mind you wanted to talk about but didn't?</span></div>
+    <div class="q-item"><span class="qn">02</span><span class="qt">How easy do you find it to talk to other men about the hard stuff — relationships, money, work?</span></div>
+    <div class="q-item"><span class="qn">03</span><span class="qt">What's the worst piece of advice about being a man you've ever received?</span></div>
+    <div class="q-item"><span class="qn">04</span><span class="qt">What's something you believed about being a man that turned out to be wrong?</span></div>
+    <div class="q-item"><span class="qn">05</span><span class="qt">What's one piece of advice that actually changed the way you live?</span></div>
+
+    <div class="q-ctarow">
+      <a class="q-cta" href="https://sam774431.typeform.com/to/KkHxesgv" target="_blank" rel="noopener">[answer the questions]</a>
+      <a class="q-cta sec" href="https://sam774431.typeform.com/to/StjMh4EQ" target="_blank" rel="noopener">[will you sign up to be a responder?]</a>
+    </div>
+  </div>
+</section>
+
+<!-- inline gate for the Dadosphere -->
+<section id="inline-gate">
+  <div class="igate-wrap">
+    <div class="igate-label">THE DADOSPHERE <span style="color:var(--g)">_</span></div>
+    <div class="irow"><span class="p">></span><input id="ipw" type="password" autocomplete="off" placeholder="password" aria-label="password"></div>
+    <div id="igateerr"></div>
+  </div>
+</section>
+
+<!-- Dadosphere content — revealed on correct password -->
+<div id="dado-content" style="display:none">
+
+<main>
+  <div class="one">
+    <div class="ask-head">ask the Dadosphere <em>anything</em></div>
+    <div class="ask-sub"><b id="anscount">2,996</b> answers given — verbatim, anonymous, from the lived experience of 505 men</div>
+    <div class="askline"><span class="p">></span><input id="ask" autocomplete="off" spellcheck="false" aria-label="ask your question"><span class="cursor"></span></div>
+    <div class="frame-toggle" onclick="toggleFramer()">how to ask a good question</div>
+    <div id="framer">
+      <input id="f1" placeholder="set the scene — &#8220;dad of two&#8221;, &#8220;just divorced&#8221;, &#8220;hate my job&#8221;">
+      <input id="f2" placeholder="what's the challenge? — &#8220;I'm feeling low&#8221;, &#8220;I'm in debt&#8221;, &#8220;I'm in love&#8221;">
+      <input id="f3" placeholder="what would help to hear? — &#8220;journeys out of debt&#8221;, &#8220;becoming your best self&#8221;">
+      <div class="go" onclick="askFramed()">[ask]</div>
+    </div>
+    <div id="res"></div>
+  </div>
+</main>
+
+<div class="tabs">
+  <span onclick="openPanel('give')">give strength</span><i>/</i>
+  <span onclick="openPanel('get')">get strength</span><i>/</i>
+  <span onclick="openPanel('me')">get me</span><i>/</i>
+  <span onclick="openPanel('support')">get support</span>
+</div>
+<div class="stock"><span onclick="openPanel('stock')">dadstock</span></div>
+<div class="footer-note">No cookies. No tracking. Just honest data about what men find useful.</div>
+
+</div><!-- /dado-content -->
+
+<!-- give strength -->
+<div class="panel" id="p-give">
+  <div class="x" onclick="closePanels()">[close]</div>
+  <div class="pin">
+    <h2>give strength</h2>
+    <h3>ask the men</h3>
+    <p>Leave the question you can't ask anywhere else. A human reads it first. Real men answer — about a week. Check back.</p>
+    <div id="qform">
+      <input class="hpf" id="hp" tabindex="-1" autocomplete="off" aria-hidden="true">
+      <input id="q1" placeholder="who you are, in a line (optional)" maxlength="140">
+      <input id="q2" placeholder="what's on your mind, in a line (optional)" maxlength="140">
+      <textarea id="q3" rows="3" placeholder="the question" maxlength="2000" aria-label="your question"></textarea>
+      <div class="go" onclick="submitQuestion()">[leave it with the men]</div>
+      <div id="qmsg"></div>
+    </div>
+    <h3>answer the ten</h3>
+    <p>Ten questions. Your words, kept whole, anonymous. Or be a first responder — real questions, your inbox.</p>
+    <p><a href="mailto:sam@thedadosphere.com?subject=give%20strength">sam@thedadosphere.com</a></p>
+  </div>
+</div>
+
+<!-- get strength: gallery + directory -->
+<div class="panel" id="p-get">
+  <div class="x" onclick="closePanels()">[close]</div>
+  <div class="pin">
+    <h2>get strength</h2>
+    <input id="gsearch" placeholder="search the answers" autocomplete="off" aria-label="search the answers">
+    <div class="legend">every answer verbatim · anonymous · one of 505 men</div>
+    <div class="chips" id="chips"></div>
+    <div class="cards" id="cards"></div>
+    <div class="more" id="more" style="display:none" onclick="loadCards()">[more]</div>
+    <div class="siglist">
+      <b>the good stuff, already out there</b><br>
+      <a href="https://www.dadlasoul.com" target="_blank" rel="noopener">Dad La Soul</a> — grassroots, award-winning, the real thing<br>
+      <a href="https://andysmanclub.co.uk" target="_blank" rel="noopener">Andy's Man Club</a> — a room of men, weekly, free<br>
+      <a href="https://menssheds.org.uk" target="_blank" rel="noopener">Men's Sheds</a> — shoulder to shoulder, something to do<br>
+      <a href="https://thedadpad.co.uk" target="_blank" rel="noopener">DadPad</a> — practical new-dad knowledge<br>
+      <a href="https://www.thecalmzone.net" target="_blank" rel="noopener">CALM</a> — talk tonight, 5pm–midnight<br>
+      <a href="https://movember.com" target="_blank" rel="noopener">Movember</a> — the big tent
+    </div>
+  </div>
+</div>
+
+<!-- get me -->
+<div class="panel" id="p-me">
+  <div class="x" onclick="closePanels()">[close]</div>
+  <div class="pin">
+    <h2>get me</h2>
+    <p>A collective intelligence of father figures around the world. <span id="mecount">Thousands</span> of answers, 505 men, 25 countries. Deeply imperfect — that's the point.</p>
+    <p>Every answer is one man's words, unedited. Men spoke; this remembers.</p>
+    <h3>who's behind it</h3>
+    <p>Sam Conniff. A dad in south London who kept noticing the questions men don't get asked — so he asked them. Built alongside the people already doing the work, not instead of them.</p>
+    <h3>how it works</h3>
+    <p>505 men answered ten questions, anonymously. Their words stay exactly as written — never edited, polished or paraphrased. Nothing appears here until a human has read it.</p>
+    <h3>the promises</h3>
+    <div class="promises">
+      verbatim, always<br>
+      anonymous, properly — no names, no emails, nothing traceable<br>
+      read by a human before it's public<br>
+      your data stays in the UK/EU, full stop
+    </div>
+    <p class="dim" style="margin-top:26px">beta · made with AI · answered by men · method, evidence &amp; safeguarding: <a href="mailto:sam@thedadosphere.com?subject=ethics%20%26%20method">sam@thedadosphere.com</a></p>
+  </div>
+</div>
+
+<!-- dadstock -->
+<div class="panel" id="p-stock">
+  <div class="x" onclick="closePanels()">[close]</div>
+  <div class="pin">
+    <h2>dadstock</h2>
+    <p>One day a year. Everyone who runs anything for dads — programmes, platforms, sheds, clubs, whatever, however — in one place. Knowledge shared, music played, batteries charged.</p>
+    <p>It doesn't exist yet. If the Dadosphere works, this is next.</p>
+    <p>Run something? Want to? Stepdads, grandads, uncle-figures — all of it counts.</p>
+    <p><a href="mailto:sam@thedadosphere.com?subject=dadstock">count me in</a></p>
+  </div>
+</div>
+
+<!-- get support -->
+<div class="panel" id="p-support">
+  <div class="x" onclick="closePanels()">[close]</div>
+  <div class="pin">
+    <h2>get support</h2>
+    <div class="siglist">
+      <b><a href="https://andysmanclub.co.uk" target="_blank" rel="noopener">Andy's Man Club</a></b> — a room of men, weekly, free, no referral<br>
+      <b><a href="https://www.thecalmzone.net" target="_blank" rel="noopener">CALM</a></b> — 0800 58 58 58, 5pm–midnight<br>
+      <b><a href="https://www.samaritans.org" target="_blank" rel="noopener">Samaritans</a></b> — 116 123, free, 24/7<br>
+    </div>
+    <p class="dim" style="margin-top:26px">who could you actually say it to, this week?</p>
+  </div>
+</div>
+
+<script>
+/* ================= PLAUSIBLE ================= */
+/* cookieless, GDPR-compliant — script loaded in <head> */
+function plsbl(e,opts){try{window.plausible&&window.plausible(e,opts)}catch(ex){}}
+
+/* ================= CONFIG ================= */
+const SB_URL='https://qbhdcajdspczccrmbjlx.supabase.co';
+const SB_KEY='sb_publishable_F-KLlYRNk5bnjGwH02pncg_Gax7BHU8';
+const PW_HASH='1225e2cc36de14f05c707de77e8dc48d9db7e8d3b0a5ce574d6c886abe4bcf09'; /* SHA-256 of the password — the password itself is not in this file */
+const CORE_QS="worst_advice,belief_wrong,advice_changed,wish_conversation,children_know,most_lost,pass_on,becoming,hardest_thing,best_thing";
+const BASE='curation_status=eq.approved&answer_text=not.is.null&question_key=in.('+CORE_QS+')';
+/* one gallery, two tables (locked 12 Jun): survey answers + Q&A experience shares converge at presentation.
+   IMPORTANT: always request explicit columns — column privileges block select=* on the Q&A tables. */
+const QR_BASE='curation_status=eq.approved';
+const A_SEL='answers?select=answer_text,themes(name),questions(canonical)&';
+const QR_SEL='question_responses?select=response_text,themes(name),asked_questions(question_text)&';
+
+/* rotating placeholder: teaching by example, no instruction.
+   each seed carries a tuned route — q = keyword search, f = theme filter — so a seed only ever
+   promises what the corpus can deliver (raw full-sentence search returns ~0 for most of these).
+   hit counts verified against approved+core answers 12 Jun 2026. */
+const SEEDS=[
+ {t:"how do I do this without turning into my dad?",q:"dad or father"},          /* 203 */
+ {t:"is it weak to ask for help?",q:"asking help"},                              /* 37 */
+ {t:"how do you talk about your feelings?",q:"emotions or feelings"},            /* 267 */
+ {t:"why do money worries make me go quiet?",f:"theme_id=eq.9"},                 /* 190 */
+ {t:"what belief about being a man turned out wrong?",f:"theme_id=eq.1"},        /* 401 */
+ {t:"why is it so hard to make friends?",q:"friends or friendship"},             /* 91 */
+ {t:"how do I get better at looking after my health?",f:"theme_id=eq.8"},        /* 66 — thinnest; feed in Wave 5 */
+ {t:"ask anything"}
+];
+let si=0;const askEl=document.getElementById('ask');
+function rotateSeed(){if(document.activeElement!==askEl&&!askEl.value){askEl.placeholder=SEEDS[si].t;si=(si+1)%SEEDS.length}}
+rotateSeed();setInterval(rotateSeed,4200);
+function currentSeed(){return SEEDS[(si-1+SEEDS.length)%SEEDS.length]}
+
+/* ================= GATE ================= */
+const inlineGate=document.getElementById('inline-gate');
+const dadoContent=document.getElementById('dado-content');
+function unlock(){
+  inlineGate.style.display='none';
+  dadoContent.style.display='block';
+  askEl.focus();
+  setTimeout(openDoor,0);
+}
+if(sessionStorage.getItem('dado_ok')==='1'){unlock()}
+async function pwOk(v){
+  const h=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(v));
+  return [...new Uint8Array(h)].map(b=>b.toString(16).padStart(2,'0')).join('')===PW_HASH;
+}
+document.getElementById('ipw').addEventListener('keydown',async e=>{
+  if(e.key==='Enter'){
+    if(await pwOk(e.target.value)){sessionStorage.setItem('dado_ok','1');unlock()}
+    else{document.getElementById('igateerr').textContent='not yet.';e.target.value=''}
+  }
+});
+
+/* ================= API ================= */
+async function api(path,opts={}){
+  return fetch(SB_URL+'/rest/v1/'+path,{...opts,headers:{apikey:SB_KEY,Authorization:'Bearer '+SB_KEY,...(opts.headers||{})}});
+}
+async function countAt(path){
+  const r=await api(path+'&limit=1',{headers:{Prefer:'count=exact'}});
+  const cr=r.headers.get('content-range');return cr?parseInt(cr.split('/')[1]):0;
+}
+function countOf(filter){return countAt('answers?select=id&'+filter)}
+/* normalise both tables to one card shape: {text, theme, q (the prompting question), src} */
+const normA=r=>r?{text:r.answer_text,theme:r.themes&&r.themes.name,q:r.questions&&r.questions.canonical,src:'survey'}:null;
+const normQ=r=>r?{text:r.response_text,theme:r.themes&&r.themes.name,q:r.asked_questions&&r.asked_questions.question_text,src:'qa'}:null;
+const PROV={survey:'founding survey · verbatim · anonymous · one of 505 men',qa:'asked by a man, answered by a man · verbatim · anonymous'};
+/* random draw, weighted honestly by pool size across both tables.
+   extraA filters answers; extraQ filters question_responses (pass null to skip the Q&A pool). */
+async function randomAnswer(extraA,extraQ){
+  const fA=BASE+(extraA?'&'+extraA:'');
+  const fQ=(extraQ===null)?null:QR_BASE+(extraQ?'&'+extraQ:'');
+  const [nA,nQ]=await Promise.all([countOf(fA),fQ?countAt('question_responses?select=id&'+fQ):0]);
+  if(!nA&&!nQ)return null;
+  /* fetch a small batch at a random offset; pick the longest qualifying answer (≥100 chars)
+     — longer answers correlate with depth (Prolific wave responses skew longer); fall back to any */
+  if(nQ&&Math.random()*(nA+nQ)<nQ){
+    const r=await api(QR_SEL+fQ+'&limit=5&offset='+Math.floor(Math.random()*Math.max(1,nQ-4)));
+    if(r.ok){const j=await r.json();const pool=j.map(normQ).filter(x=>x&&x.text&&x.text.length>=100);const pick=pool.sort((a,b)=>b.text.length-a.text.length)[0]||normQ(j[0]||null);if(pick)return pick}
+  }
+  if(!nA)return null;
+  const r=await api(A_SEL+fA+'&limit=5&offset='+Math.floor(Math.random()*Math.max(1,nA-4)));
+  const j=await r.json();
+  const pool=j.map(normA).filter(x=>x&&x.text&&x.text.length>=100);
+  return pool.sort((a,b)=>b.text.length-a.text.length)[0]||normA(j[0]||null);
+}
+async function searchAnswer(q){
+  const cleaned=q.replace(/[^\w\s]/g,' ').trim();
+  if(!cleaned)return null;
+  const w='&tsv=wfts.'+encodeURIComponent(cleaned);
+  const [r1,r2]=await Promise.all([
+    api(A_SEL+BASE+w+'&limit=25'),
+    api(QR_SEL+QR_BASE+w+'&limit=25')
+  ]);
+  const a=r1.ok?(await r1.json()).map(normA):[];
+  const b=r2.ok?(await r2.json()).map(normQ):[];
+  /* minimum 100 chars — surface depth, not noise */
+  const all=a.concat(b).filter(r=>r&&r.text&&r.text.length>=100);
+  return all.length?all[Math.floor(Math.random()*all.length)]:null;
+}
+
+/* resource matching by theme — sample set for beta; directory table later */
+const RES={
+ "Masculinity & Identity":[["Movember","https://movember.com"],["The Book of Man","https://thebookofman.com"],["Andy's Man Club","https://andysmanclub.co.uk"]],
+ "Fatherhood, Family & Being Fathered":[["Dad La Soul","https://www.dadlasoul.com"],["Dadvengers","https://dadvengers.com"],["Fatherhood Institute","https://www.fatherhoodinstitute.org"]],
+ "Struggle, Shame & Vulnerability":[["Andy's Man Club","https://andysmanclub.co.uk"],["CALM","https://www.thecalmzone.net"],["Hub of Hope","https://hubofhope.co.uk"]],
+ "What Helped":[["Andy's Man Club","https://andysmanclub.co.uk"],["Movember","https://movember.com"],["Men's Sheds","https://menssheds.org.uk"]],
+ "Connection, Isolation & Intimacy":[["Men's Sheds","https://menssheds.org.uk"],["Dad La Soul","https://www.dadlasoul.com"],["Relate","https://www.relate.org.uk"]],
+ "Legacy & Purpose":[["Fatherhood Institute","https://www.fatherhoodinstitute.org"],["The Book of Man","https://thebookofman.com"],["Dad La Soul","https://www.dadlasoul.com"]],
+ "Present Tense & Becoming":[["Movember","https://movember.com"],["The Book of Man","https://thebookofman.com"],["Andy's Man Club","https://andysmanclub.co.uk"]],
+ "The Body, Health & Mortality":[["Movember","https://movember.com"],["NHS men's health","https://www.nhs.uk/live-well"],["CALM","https://www.thecalmzone.net"]],
+ "Work, Money & Provision":[["MoneyHelper","https://www.moneyhelper.org.uk"],["Citizens Advice","https://www.citizensadvice.org.uk"],["CALM","https://www.thecalmzone.net"]],
+ "Humour & Banter":[["Dad La Soul","https://www.dadlasoul.com"],["The Book of Man","https://thebookofman.com"],["Men's Sheds","https://menssheds.org.uk"]]
+};
+
+/* theme → matched question for the contribution screen */
+const THEME_Q={
+  "Masculinity & Identity":"What's something you believed about being a man that turned out to be wrong?",
+  "Fatherhood, Family & Being Fathered":"What do you wish someone had told you about being a father?",
+  "Struggle, Shame & Vulnerability":"What's something you've been carrying that you haven't said out loud?",
+  "What Helped":"What's one thing that actually helped — something you'd tell another man?",
+  "Connection, Isolation & Intimacy":"Where do you feel most like yourself?",
+  "Legacy & Purpose":"What do you want the people you love to remember about you?",
+  "Present Tense & Becoming":"What are you becoming? What's changing?",
+  "The Body, Health & Mortality":"How are you, really?",
+  "Work, Money & Provision":"What does providing actually cost you?",
+  "Humour & Banter":"What's made you laugh recently — properly laugh?"
+};
+
+/* inline contribution: posts to `contributions` table (DB migration required — see README-DEPLOY.md)
+   schema: {answer_text text, theme_name text, submitted_at timestamptz} with RLS anon insert enabled */
+async function submitContrib(theme,text){
+  try{
+    const r=await api('contributions',{method:'POST',
+      headers:{'Content-Type':'application/json',Prefer:'return=minimal'},
+      body:JSON.stringify({answer_text:text,theme_name:theme||null,submitted_at:new Date().toISOString()})});
+    if(r.ok){plsbl('contribution_submitted');return true}
+    return false;
+  }catch(e){return false}
+}
+
+function showContrib(theme){
+  plsbl('contribute_clicked');
+  const existing=res.querySelector('.contrib-form');
+  if(existing){existing.remove();return}
+  const q=THEME_Q[theme]||"What's something you'd want another man to know?";
+  const cf=document.createElement('div');cf.className='contrib-form';
+  const ta=document.createElement('textarea');
+  ta.rows=3;ta.placeholder='your answer — verbatim, anonymous';ta.maxLength=2000;ta.setAttribute('aria-label','your contribution');
+  const cq=document.createElement('div');cq.className='cq';cq.textContent='> '+q;
+  const cgo=document.createElement('div');cgo.className='cgo';cgo.textContent='[submit answer]';
+  const cmsg=document.createElement('div');cmsg.className='cmsg';
+  cf.appendChild(cq);cf.appendChild(ta);cf.appendChild(cgo);cf.appendChild(cmsg);
+  cgo.onclick=async()=>{
+    const txt=ta.value.trim();
+    if(txt.length<20){cmsg.textContent='a bit more — give the next man something to go on.';return}
+    cmsg.textContent='…';
+    const ok=await submitContrib(theme,txt);
+    if(ok){cmsg.textContent='got it. a human reads it first.';ta.value='';ta.disabled=true;cgo.style.display='none'}
+    else{cmsg.textContent="didn't go through — try again or email sam@thedadosphere.com"}
+  };
+  res.appendChild(cf);ta.focus();
+}
+
+/* ================= THE ONE THING ================= */
+const res=document.getElementById('res');
+let busy=false,lastRun=null,lastRow=null,lastAsked='',doorOpened=false;
+const MEN=505;
+
+/* the door: one man's words on screen before anyone does anything */
+async function openDoor(){
+  if(doorOpened)return;doorOpened=true;
+  if(busy)return;busy=true;lastRun=()=>askCorpus('');
+  res.innerHTML='<div class="h">…</div>';
+  render(await randomAnswer());
+}
+/* time-capped + rAF: total reveal ≤2.5s however long the answer; immune to background-tab timer throttling */
+function typeInto(el,t,sp,done){
+  const D=Math.min(2500,Math.max(400,t.length*sp)),t0=performance.now();
+  (function f(now){
+    const p=Math.min(1,((now||performance.now())-t0)/D);
+    el.textContent=t.slice(0,Math.ceil(p*t.length));
+    if(p<1)requestAnimationFrame(f);else done&&done();
+  })(t0);
+}
+function render(row){
+  if(!row){res.innerHTML='<div class="h">nothing close enough yet — ask it another way, or <span class="u" style="color:var(--ink1);cursor:pointer" onclick="openIntake(lastAsked)">leave it with the men</span>. real answers, about a week.</div>';busy=false;return}
+  lastRow=row;
+  res.innerHTML='';
+  if(row.q){const ql=document.createElement('div');ql.className='q';ql.textContent='> '+row.q.trim();res.appendChild(ql)}
+  const a=document.createElement('div');a.className='a';res.appendChild(a);
+  const h=document.createElement('div');h.className='h';res.appendChild(h);
+  typeInto(a,'"'+row.text+'"',16,()=>{
+    plsbl('answer_served',{props:{answer_theme:row.theme||'unknown'}});
+    h.textContent=(row.theme?row.theme.toLowerCase()+' · ':'')+PROV[row.src];
+    const ag=document.createElement('div');ag.className='again';
+    ag.innerHTML='<span>[another]</span> &nbsp; <span>[something lighter]</span> &nbsp; <span>[share]</span> &nbsp; <span>[add your answer]</span>';
+    ag.children[0].onclick=()=>{plsbl('another_answer_requested');lastRun&&lastRun()};
+    ag.children[1].onclick=lighter;
+    ag.children[2].onclick=shareCard;
+    ag.children[3].onclick=()=>showContrib(row.theme);
+    res.appendChild(ag);
+    const tn=row.theme;
+    if(tn&&RES[tn]){
+      const rl=document.createElement('div');rl.className='h';rl.style.marginTop='18px';
+      rl.textContent='elsewhere: ';
+      RES[tn].forEach(([n,u],i)=>{
+        if(i>0)rl.appendChild(document.createTextNode(' · '));
+        const la=document.createElement('a');la.href=u;la.target='_blank';la.rel='noopener';la.textContent=n;
+        la.addEventListener('click',()=>plsbl('resource_link_clicked',{props:{resource_name:n}}));
+        rl.appendChild(la);
+      });
+      res.appendChild(rl);
+    }
+    busy=false;
+  });
+}
+async function askCorpus(q){
+  if(busy)return;busy=true;lastRun=()=>askCorpus(q);lastAsked=q||'';
+  res.innerHTML='<div class="h">…</div>';
+  let row=q?await searchAnswer(q):null;
+  if(!row&&q)return render(null); /* typed question, no match: offer the intake, never a random non-answer */
+  if(!row)row=await randomAnswer();
+  render(row);
+}
+/* a seed travels by its tuned route, never by raw sentence search */
+async function askSeed(s){
+  if(busy)return;busy=true;lastRun=()=>askSeed(s);
+  res.innerHTML='<div class="h">…</div>';
+  let row=null;
+  if(s.q)row=await searchAnswer(s.q);
+  else if(s.f)row=await randomAnswer(s.f,s.f);
+  if(!row)row=await randomAnswer();
+  render(row);
+}
+async function lighter(){
+  if(busy)return;busy=true;
+  res.innerHTML='<div class="h">…</div>';
+  render(await randomAnswer('or=(theme_id.eq.10,question_key.eq.best_thing)','theme_id=eq.10'));
+}
+askEl.addEventListener('keydown',e=>{
+  if(e.key!=='Enter')return;
+  const typed=askEl.value.trim();
+  if(typed){
+    askEl.value='';
+    /* if he typed a seed back at us (or tapped autocomplete), honour its tuned route */
+    const norm=s=>s.replace(/\?+$/,'').toLowerCase();
+    const seed=SEEDS.find(s=>s.q||s.f?norm(s.t)===norm(typed):false);
+    seed?askSeed(seed):askCorpus(typed);
+  }else{
+    /* empty enter = ask the question on screen */
+    const s=currentSeed();
+    (s.q||s.f)?askSeed(s):askCorpus('');
+  }
+});
+
+/* framer */
+function toggleFramer(){const f=document.getElementById('framer');f.style.display=f.style.display==='block'?'none':'block'}
+['f1','f2','f3'].forEach(id=>document.getElementById(id).addEventListener('keydown',e=>{if(e.key==='Enter')askFramed()}));
+function askFramed(){
+  const v=id=>document.getElementById(id).value.trim();
+  const scene=v('f1'),challenge=v('f2'),help=v('f3');
+  document.getElementById('framer').style.display='none';
+  if(scene||challenge||help)runFramed(help,challenge,scene);
+}
+/* what-would-help-to-hear is the retrievable request — search it first, widen only if it misses */
+async function runFramed(help,challenge,scene){
+  if(busy)return;busy=true;lastRun=()=>runFramed(help,challenge,scene);lastAsked=[scene,challenge,help].filter(Boolean).join(' ');
+  res.innerHTML='<div class="h">…</div>';
+  let row=null;
+  if(help)row=await searchAnswer(help);
+  if(!row&&challenge)row=await searchAnswer(challenge);
+  if(!row&&scene)row=await searchAnswer(scene);
+  if(!row)row=await randomAnswer();
+  render(row);
+}
+
+/* ================= SHARE: quote card ================= */
+async function shareCard(){
+  if(!lastRow)return;
+  try{await document.fonts.load('700 56px "JetBrains Mono"');await document.fonts.load('800 34px "JetBrains Mono"');await document.fonts.load('400 28px "IBM Plex Mono"')}catch(e){}
+  const W=1080,H=1080,pad=90;
+  const c=document.createElement('canvas');c.width=W;c.height=H;const x=c.getContext('2d');
+  x.fillStyle='#000';x.fillRect(0,0,W,H);
+  let t=lastRow.text;if(t.length>420)t=t.slice(0,417).trimEnd()+'…';
+  t='"'+t+'"';
+  const wrap=s=>{x.font='700 '+s+'px "JetBrains Mono", monospace';const ws=t.split(/\s+/),L=[];let l='';
+    ws.forEach(w=>{const c2=l?l+' '+w:w;if(x.measureText(c2).width>W-2*pad){if(l)L.push(l);l=w}else l=c2});
+    if(l)L.push(l);return L};
+  let fs=56,lines=wrap(fs);
+  while(lines.length*fs*1.5>H-380&&fs>24){fs-=2;lines=wrap(fs)}
+  x.fillStyle='#fff';x.textBaseline='top';
+  let y=Math.max(pad,(H-260-lines.length*fs*1.5)/2);
+  lines.forEach(l=>{x.fillText(l,pad,y);y+=fs*1.5});
+  x.fillStyle='#FF2D87';x.fillRect(pad,H-196,72,8);
+  x.fillStyle='#888';x.font='400 28px "IBM Plex Mono", monospace';
+  x.fillText('one of '+MEN+' men · verbatim · anonymous',pad,H-156);
+  x.fillStyle='#fff';x.font='800 34px "JetBrains Mono", monospace';
+  x.fillText('THEDADOSPHERE.COM',pad,H-104);
+  const blob=await new Promise(r=>c.toBlob(r,'image/png'));
+  const file=new File([blob],'dadosphere.png',{type:'image/png'});
+  if(navigator.canShare&&navigator.canShare({files:[file]})){
+    try{await navigator.share({files:[file]});return}catch(e){if(e.name==='AbortError')return}
+  }
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='dadosphere.png';a.click();
+  setTimeout(()=>URL.revokeObjectURL(a.href),5000);
+}
+
+/* ================= INTAKE: ask the men ================= */
+function openIntake(prefill){
+  openPanel('give');
+  if(prefill)document.getElementById('q3').value=prefill;
+  document.getElementById('q3').focus();
+}
+function qmsg(t){document.getElementById('qmsg').textContent=t}
+async function submitQuestion(){
+  if(document.getElementById('hp').value)return; /* honeypot */
+  const q=document.getElementById('q3').value.trim();
+  if(q.length<8){qmsg('a few more words — give the men something to work with.');return}
+  const last=+localStorage.getItem('dado_last_q')||0;
+  if(Date.now()-last<120000){qmsg('one at a time — give it a minute.');return}
+  const meta={};
+  const who=document.getElementById('q1').value.trim(),mind=document.getElementById('q2').value.trim();
+  if(who)meta.who=who;if(mind)meta.mind=mind;
+  qmsg('…');
+  try{
+    const r=await api('asked_questions',{method:'POST',
+      headers:{'Content-Type':'application/json',Prefer:'return=minimal'},
+      body:JSON.stringify({question_text:q,meta:meta,submitted_at:new Date().toISOString()})});
+    if(r.ok){
+      localStorage.setItem('dado_last_q',String(Date.now()));
+      plsbl('question_submitted');
+      ['q1','q2','q3'].forEach(id=>document.getElementById(id).value='');
+      qmsg('got it. a human reads it first; real men answer. about a week — check back.');
+    }else{qmsg("that didn't go through — try again, or email sam@thedadosphere.com")}
+  }catch(e){qmsg("that didn't go through — try again, or email sam@thedadosphere.com")}
+}
+
+/* ================= PANELS ================= */
+function openPanel(k){closePanels();document.getElementById('p-'+k).style.display='block';if(k==='get'){plsbl('directory_opened');if(!galleryLoaded){galleryLoaded=true;loadCards()}}}
+function closePanels(){document.querySelectorAll('.panel').forEach(p=>p.style.display='none')}
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closePanels()});
+/* clicking the empty backdrop (outside the content column) also closes */
+document.querySelectorAll('.panel').forEach(p=>p.addEventListener('click',e=>{if(e.target===p)closePanels()}));
+
+/* ================= GALLERY ================= */
+const THEMES=[[0,"all"],[1,"masculinity & identity"],[2,"fatherhood & family"],[3,"struggle & shame"],[4,"what helped"],[5,"connection & isolation"],[6,"legacy & purpose"],[7,"becoming"],[8,"body & health"],[9,"work & money"],[10,"humour"]];
+let theme=0,offset=0,gq='',galleryLoaded=false;
+const chips=document.getElementById('chips'),grid=document.getElementById('cards');
+THEMES.forEach(([id,name])=>{
+  const c=document.createElement('div');c.className='chip'+(id===0?' on':'');c.textContent=name;
+  c.onclick=()=>{theme=id;offset=0;grid.innerHTML='';[...chips.children].forEach(x=>x.classList.remove('on'));c.classList.add('on');loadCards()};
+  chips.appendChild(c);
+});
+let gt=null;
+document.getElementById('gsearch').addEventListener('input',e=>{
+  clearTimeout(gt);gt=setTimeout(()=>{gq=e.target.value.trim();offset=0;grid.innerHTML='';loadCards()},450);
+});
+/* one feed, two sources: survey answers paged 11 at a time, Q&A shares (few, precious)
+   fetched once per filter change and folded in a couple per batch. */
+let qaPool=[];
+async function fetchQAPool(){
+  let f=QR_BASE+(theme?'&theme_id=eq.'+theme:'');
+  if(gq)f+='&tsv=wfts.'+encodeURIComponent(gq.replace(/[^\w\s]/g,' '));
+  const r=await api(QR_SEL+f+'&limit=100');
+  return r.ok?(await r.json()).map(normQ):[];
+}
+async function loadCards(){
+  document.getElementById('more').style.display='none';
+  if(offset===0)qaPool=await fetchQAPool();
+  let f=BASE+(theme?'&theme_id=eq.'+theme:'');
+  if(gq)f+='&tsv=wfts.'+encodeURIComponent(gq.replace(/[^\w\s]/g,' '));
+  const r=await api(A_SEL+f+'&limit=11&offset='+offset);
+  const rows=(await r.json()).map(normA);
+  offset+=rows.length;
+  const batch=rows.slice();
+  qaPool.splice(0,3).forEach(x=>batch.splice(Math.floor(Math.random()*(batch.length+1)),0,x));
+  /* flourishing lens: every set ends on something light */
+  const li=batch.findIndex(x=>x.theme==='Humour & Banter');
+  if(li>-1&&li<batch.length-1){batch.push(batch.splice(li,1)[0])}
+  else if(li===-1&&batch.length){
+    const light=await randomAnswer('or=(theme_id.eq.10,question_key.eq.best_thing)','theme_id=eq.10');
+    if(light)batch.push(light);
+  }
+  /* filter short answers at presentation — anything under 100 chars is noise, not signal */
+  batch.filter(row=>row&&row.text&&row.text.length>=100).forEach(row=>{
+    const d=document.createElement('div');d.className='card';
+    d.innerHTML='<div class="qq"></div><div class="aa"></div><div class="hm"></div>';
+    if(row.q)d.querySelector('.qq').textContent='> '+row.q.trim();
+    d.querySelector('.aa').textContent='"'+row.text+'"';
+    d.querySelector('.hm').textContent=(row.theme?row.theme.toLowerCase():'verbatim')+(row.src==='qa'?' · asked by a man, answered by a man':' · founding survey');
+    grid.appendChild(d);
+  });
+  if(rows.length===11||qaPool.length)document.getElementById('more').style.display='block';
+}
+
+/* counts: headline leads with answers given (live, door pool + Q&A shares); get me shows total approved */
+Promise.all([countOf(BASE),countAt('question_responses?select=id&'+QR_BASE)])
+  .then(([a,b])=>{if(a+b)document.getElementById('anscount').textContent=(a+b).toLocaleString()});
+Promise.all([countOf('curation_status=eq.approved'),countAt('question_responses?select=id&'+QR_BASE)])
+  .then(([a,b])=>{if(a+b)document.getElementById('mecount').textContent=(a+b).toLocaleString()});
+
+/* clock */
+const clk=()=>{const d=new Date();document.getElementById('clock').textContent=String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0')};
+clk();setInterval(clk,5000);
+</script>
+</body>
+</html>
