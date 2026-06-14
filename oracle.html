@@ -125,6 +125,7 @@
   .panel .siglist b{color:#fff;font-weight:500}
   .panel a:hover{color:#fff}
   .panel .give{color:#fff;cursor:pointer;text-decoration:underline;text-decoration-color:var(--g);text-decoration-thickness:2px;text-underline-offset:5px}
+  .tf-frame{width:100%;height:76vh;border:1px solid var(--ink4);background:#000;margin-top:8px;display:block}
 
   /* directory */
   #gsearch{background:transparent;border:none;outline:none;border-bottom:1px solid var(--ink4);color:#fff;font-family:var(--mono);font-size:14px;padding:9px 0;width:100%;max-width:460px;margin-top:4px}
@@ -263,6 +264,16 @@
   </div>
 </div>
 
+<!-- GIVE STRENGTH (Typeform embedded in-page, lazily loaded on first open) -->
+<div class="panel" id="p-give">
+  <div class="x" onclick="closePanels()">[close]</div>
+  <div class="pin">
+    <h2>give strength</h2>
+    <p>Share your own lived experience, anonymously, for the next man who asks. No name shown, no email shown — your words, verbatim.</p>
+    <div id="tf-embed"></div>
+  </div>
+</div>
+
 <!-- SUPPORT (safeguarding off-ramp — quiet, but always one tap away from the footer) -->
 <div class="panel" id="p-support">
   <div class="x" onclick="closePanels()">[close]</div>
@@ -291,9 +302,22 @@ const FN=SB_URL+'/functions/v1';
 const H={apikey:SB_KEY,Authorization:'Bearer '+SB_KEY,'Content-Type':'application/json'};
 const GIVE_STRENGTH_URL='https://sam774431.typeform.com/to/VnZSqf6Q'; /* Experience Share */
 
+/* Give strength: embed the Typeform IN the page (a panel), loaded LAZILY — the iframe is
+   only created on first open, so nothing Typeform-related touches the initial page load. */
+let tfLoaded=false;
 function giveStrength(){
   plsbl('give_strength_clicked');
-  window.open(GIVE_STRENGTH_URL,'_blank','noopener');
+  openPanel('give');
+  if(!tfLoaded){
+    tfLoaded=true;
+    const c=document.getElementById('tf-embed');
+    const f=document.createElement('iframe');
+    f.className='tf-frame';
+    f.src=GIVE_STRENGTH_URL;
+    f.title='Give strength — share your experience';
+    f.setAttribute('allow','camera; microphone; autoplay; encrypted-media;');
+    c.appendChild(f);
+  }
 }
 
 /* theme id → the locked-ten question a contribution answers (key sent to Supabase + canonical shown) */
