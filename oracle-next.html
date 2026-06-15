@@ -1,0 +1,699 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>THE DADOSPHERE</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23000'/%3E%3Ctext x='16' y='24' font-family='monospace' font-size='25' font-weight='800' fill='%23fff' text-anchor='middle'%3ED%3C/text%3E%3C/svg%3E">
+<meta name="robots" content="noindex, nofollow">
+<meta name="description" content="A social experiment in collective intelligence and lived experience for the questions men and boys often carry alone. Anonymous answers, verbatim, from real men. No chatbot. No advice.">
+<meta property="og:title" content="THE DADOSPHERE">
+<meta property="og:description" content="The questions men carry alone, answered by 500+ men. Anonymous. Verbatim. Ask anything.">
+<meta property="og:url" content="https://thedadosphere.com">
+<meta property="og:type" content="website">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=JetBrains+Mono:wght@400;700;800&display=swap" rel="stylesheet">
+
+<!-- Privacy-friendly, cookieless analytics by Plausible -->
+<script async src="https://plausible.io/js/pa-aOP9Xw_iGjaMVPpsV9FYn.js"></script>
+<script>
+  window.plausible=window.plausible||function(){(plausible.q=plausible.q||[]).push(arguments)},plausible.init=plausible.init||function(i){plausible.o=i||{}};
+  plausible.init()
+</script>
+
+<style>
+  :root{--g:#FF2D87;--mono:'IBM Plex Mono',monospace;--monb:'JetBrains Mono',monospace;
+        --ink0:#fff;--ink1:#999;--ink2:#888;--ink3:#555;--ink4:#2a2a2a}
+  *{margin:0;padding:0;box-sizing:border-box}
+  html,body{background:#000}
+  body{color:#fff;font-family:var(--mono);line-height:1.6;min-height:100vh;display:flex;flex-direction:column}
+  ::selection{background:var(--g);color:#000}
+  a{color:var(--ink2)}
+  .u{text-decoration:underline;text-decoration-color:var(--g);text-decoration-thickness:2px;text-underline-offset:5px}
+  .cursor{display:inline-block;width:.55em;height:2px;background:var(--g);vertical-align:baseline;margin-left:4px;animation:blink 1.05s steps(1) infinite}
+  @keyframes blink{50%{opacity:0}}
+  @keyframes fadein{to{opacity:1}}
+
+  /* top chrome — back (left) · What the FAQ + Support (right). Identical everywhere. */
+  .top{display:flex;justify-content:space-between;align-items:baseline;padding:20px 26px;font-size:11.5px;color:var(--ink3);letter-spacing:.1em}
+  .top .brand{color:var(--ink1);cursor:pointer;user-select:none}
+  .top .brand:hover{color:#fff}
+  .top .nav{display:flex;gap:22px}
+  .top .nav span{color:var(--ink2);cursor:pointer;user-select:none}
+  .top .nav span:hover{color:#fff;text-decoration:underline;text-decoration-color:var(--g);text-decoration-thickness:2px;text-underline-offset:5px}
+
+  /* the hero — the ASK is the hero now. Everything else is secondary. */
+  main{flex:1;display:flex;align-items:center;justify-content:center;padding:40px 26px}
+  .one{width:min(820px,100%)}
+  .askwrap{margin-top:8px}
+  .askline{display:flex;align-items:baseline;gap:12px;font-size:clamp(20px,3vw,30px);position:relative}
+  .askline .p{color:var(--g)}
+  #ask{background:transparent;border:none;outline:none;color:#fff;font-family:var(--mono);font-size:clamp(20px,3vw,30px);flex:1;min-width:0;position:relative;z-index:2}
+  #ask::placeholder{color:var(--ink3)}
+  /* rolling examples — a faint ghost over the empty input, cross-fading through real questions */
+  .ghost{position:absolute;left:28px;right:0;top:0;color:var(--ink3);pointer-events:none;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+         font-size:clamp(20px,3vw,30px);line-height:1.2;opacity:1;transition:opacity .45s ease;z-index:1}
+  .ghost.hide{opacity:0}
+
+  /* the framer — progressive disclosure, hidden until hesitation/deletion */
+  .framenudge{margin-top:20px;font-size:13px;color:var(--ink2);cursor:pointer;user-select:none;width:fit-content;
+              opacity:0;max-height:0;overflow:hidden;transition:opacity .5s ease;display:none}
+  .framenudge.show{display:block;opacity:1;max-height:40px}
+  .framenudge:hover{color:#fff;text-decoration:underline;text-decoration-color:var(--g);text-decoration-thickness:2px;text-underline-offset:5px}
+  #framer{display:none;margin-top:18px;max-width:680px}
+  #framer.on{display:block;animation:fadein .45s ease}
+  #framer input{display:block;width:100%;background:transparent;border:none;outline:none;border-bottom:1px solid var(--ink4);
+                color:#fff;font-family:var(--mono);font-size:15px;padding:11px 0;margin-bottom:4px}
+  #framer input:focus{border-bottom-color:var(--ink2)}
+  #framer input::placeholder{color:var(--ink3)}
+  #framer .go{margin-top:16px;font-size:13px;color:#fff;cursor:pointer;user-select:none;width:fit-content;
+              text-decoration:underline;text-decoration-color:var(--g);text-decoration-thickness:2px;text-underline-offset:5px}
+
+  /* demoted stat + citation — quiet supporting context, below the ask */
+  .context{margin-top:40px;color:var(--ink2);font-size:13.5px;line-height:1.6;max-width:620px}
+  .context sup{font-size:.7em;color:var(--ink3)}
+  .cite{margin-top:30px;color:var(--ink3);font-size:11.5px;letter-spacing:.02em}
+
+  /* the response loop */
+  #res{margin-top:44px}
+  #res .qline{color:var(--ink2);font-size:12.5px;margin-bottom:16px;overflow-wrap:break-word}
+  #res .a{font-family:var(--monb);font-weight:700;font-size:clamp(18px,2.5vw,25px);line-height:1.55;max-width:760px;overflow-wrap:break-word}
+  #res .demo{color:var(--ink2);font-size:12.5px;margin-top:16px}
+  #res .theme{color:var(--ink3);font-size:12.5px;margin-top:6px;letter-spacing:.02em}
+  #res .saf{border:1px solid var(--g);border-left-width:3px;padding:16px 18px;margin-bottom:28px;border-radius:2px;background:rgba(255,45,135,.05)}
+  #res .saf .safh{font-family:var(--monb);font-weight:700;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--g);margin-bottom:10px}
+  #res .saf .safm{font-size:14px;line-height:1.65;color:#fff}
+  #res .saf .safl{display:inline-block;margin-top:13px;font-size:14px;color:#fff;text-decoration:underline;text-decoration-color:var(--g);text-decoration-thickness:2px;text-underline-offset:4px}
+  #res .reslist{margin-top:26px;border-top:1px solid var(--ink4);padding-top:18px}
+  #res .reslist .rh{color:var(--ink3);font-size:11px;letter-spacing:.12em;text-transform:uppercase;margin-bottom:14px}
+  #res .resitem{margin-bottom:15px;font-size:13.5px;line-height:1.55}
+  #res .resitem a{color:var(--ink0)}
+  #res .resitem a:hover{text-decoration:underline;text-decoration-color:var(--g);text-decoration-thickness:2px;text-underline-offset:4px}
+  #res .resitem .rk{color:var(--ink3);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;display:block;margin-bottom:3px}
+  #res .resitem .rd{color:var(--ink2);font-size:12.5px}
+  #res .dir{margin-top:22px;font-size:12.5px}
+  #res .dir span{color:var(--ink2);cursor:pointer;user-select:none}
+  #res .dir span:hover{color:#fff;text-decoration:underline;text-decoration-color:var(--g);text-decoration-thickness:2px;text-underline-offset:5px}
+  #res .again{margin-top:30px;font-size:13px;color:var(--ink2)}
+  #res .again .yes{color:#fff;cursor:pointer;user-select:none;text-decoration:underline;text-decoration-color:var(--g);text-decoration-thickness:2px;text-underline-offset:5px;margin-left:10px}
+  #res .h{color:var(--ink3);font-size:12.5px}
+
+  .contrib{margin-top:34px;border-top:1px solid var(--ink4);padding-top:22px}
+  .contrib .invite{color:var(--ink1);font-size:13.5px;line-height:1.6}
+  .contrib .invite .open{color:#fff;cursor:pointer;user-select:none;text-decoration:underline;text-decoration-color:var(--g);text-decoration-thickness:2px;text-underline-offset:5px}
+  .contrib .form{display:none;margin-top:20px}
+  .contrib .form.on{display:block}
+  .contrib .cq{color:var(--ink1);font-size:13.5px;line-height:1.6;margin-bottom:14px}
+  .contrib textarea{background:transparent;border:none;outline:none;border-bottom:1px solid var(--ink4);color:#fff;font-family:var(--mono);font-size:15px;width:100%;max-width:760px;padding-bottom:6px;resize:none;display:block;line-height:1.6}
+  .contrib textarea:focus{border-bottom-color:var(--ink2)}
+  .contrib textarea::placeholder{color:var(--ink3)}
+  .contrib .cgo{margin-top:16px;font-size:13px;color:#fff;cursor:pointer;user-select:none;width:fit-content;text-decoration:underline;text-decoration-color:var(--g);text-decoration-thickness:2px;text-underline-offset:5px}
+  .contrib .cmsg{color:var(--ink2);font-size:12.5px;margin-top:14px;min-height:18px;line-height:1.5}
+  .hpf{position:absolute;left:-9999px;opacity:0;height:0;width:0;overflow:hidden}
+
+  /* footer — pills zone, then anonymity at the very bottom */
+  .footer{padding:30px 26px 34px;text-align:center;border-top:1px solid var(--ink4)}
+  .pills{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin-bottom:26px}
+  .pill{border:1px solid var(--ink3);border-radius:999px;padding:11px 22px;cursor:pointer;user-select:none;
+        display:flex;flex-direction:column;align-items:center;gap:2px;min-width:210px;transition:border-color .2s,background .2s}
+  .pill:hover{border-color:var(--g);background:rgba(255,45,135,.04)}
+  .pill .pt{font-family:var(--monb);font-weight:700;font-size:14px;color:#fff;letter-spacing:.02em}
+  .pill .ps{font-size:11.5px;color:var(--ink2)}
+  .anon{font-size:12px;color:var(--ink2);line-height:1.9}
+  .anon .mono{color:var(--ink3);font-size:11px}
+
+  /* panels */
+  .panel{display:none;position:fixed;inset:0;background:#000;z-index:50;overflow-y:auto}
+  .panel .pin{max-width:760px;margin:0 auto;padding:64px 26px 90px}
+  .panel .back{position:fixed;top:18px;left:26px;color:var(--ink2);cursor:pointer;font-size:12px;user-select:none;letter-spacing:.08em;z-index:2}
+  .panel .back:hover{color:#fff}
+  .panel h2{font-family:var(--monb);font-weight:800;font-size:clamp(20px,3vw,30px);margin-bottom:8px}
+  .panel p{color:var(--ink1);font-size:14.5px;max-width:620px;margin-bottom:14px;line-height:1.75}
+  .panel h3{font-family:var(--mono);font-weight:600;font-size:15px;color:var(--ink0);margin:34px 0 10px}
+  .panel .dim{color:var(--ink3);font-size:12.5px}
+  .panel .siglist{color:var(--ink1);font-size:14.5px;line-height:2.15;max-width:600px}
+  .panel .siglist b{color:#fff;font-weight:500}
+  .panel a:hover{color:#fff}
+  .panel .give{color:#fff;cursor:pointer;text-decoration:underline;text-decoration-color:var(--g);text-decoration-thickness:2px;text-underline-offset:5px}
+  .tf-frame{width:100%;height:76vh;border:1px solid var(--ink4);background:#000;margin-top:8px;display:block}
+
+  /* Get strength space — tabs */
+  .tabs{display:flex;gap:26px;border-bottom:1px solid var(--ink4);margin:6px 0 22px}
+  .tab{font-family:var(--monb);font-weight:700;font-size:15px;color:var(--ink3);cursor:pointer;user-select:none;padding:0 0 12px;margin-bottom:-1px;border-bottom:2px solid transparent}
+  .tab.on{color:#fff;border-bottom-color:var(--g)}
+  .tabhead{display:flex;align-items:baseline;justify-content:space-between;flex-wrap:wrap;gap:10px}
+  .tabhead .count{color:var(--ink2);font-size:12.5px}
+  .tabhead .addv{color:#fff;font-size:12.5px;cursor:pointer;user-select:none;text-decoration:underline;text-decoration-color:var(--g);text-decoration-thickness:2px;text-underline-offset:4px}
+  #gsearch{background:transparent;border:none;outline:none;border-bottom:1px solid var(--ink4);color:#fff;font-family:var(--mono);font-size:14px;padding:9px 0;width:100%;max-width:460px;margin-top:12px}
+  #gsearch:focus{border-bottom-color:var(--ink2)}
+  #gsearch::placeholder{color:var(--ink3)}
+  .chips{display:flex;flex-wrap:wrap;gap:6px 16px;margin:20px 0 4px}
+  .chip{font-size:12.5px;color:var(--ink2);cursor:pointer;user-select:none;padding-bottom:3px}
+  .chip::before{content:'['}.chip::after{content:']'}
+  .chip:hover{color:#fff}
+  .chip.on{color:#fff;border-bottom:2px solid var(--g)}
+  .cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px;margin-top:26px}
+  .card{border:1px solid var(--ink4);padding:18px;display:flex;flex-direction:column}
+  .card .qq{color:var(--ink2);font-size:12px;line-height:1.5;margin-bottom:10px;overflow-wrap:break-word}
+  .card .aa{color:#fff;font-size:14px;line-height:1.55;margin-bottom:12px;overflow-wrap:break-word}
+  .card .hm{color:var(--ink3);font-size:11px;border-top:1px solid var(--ink4);padding-top:9px;margin-top:auto}
+  /* resource cards (Directory) */
+  .rcard .rn{font-family:var(--monb);font-weight:700;font-size:15px;margin-bottom:6px}
+  .rcard .rn a{color:#fff}
+  .rcard .rn a:hover{text-decoration:underline;text-decoration-color:var(--g);text-decoration-thickness:2px;text-underline-offset:4px}
+  .rcard .rw{color:var(--ink1);font-size:13px;line-height:1.55;margin-bottom:12px}
+  .rcard .rt{color:var(--ink3);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;border-top:1px solid var(--ink4);padding-top:9px;margin-top:auto}
+  .more{margin-top:24px;color:var(--ink2);font-size:13px;cursor:pointer;user-select:none;width:fit-content;display:flex;gap:14px;flex-wrap:wrap}
+  .more span{cursor:pointer}
+  .more .m1:hover,.more .m2:hover{color:#fff}
+  .more .m2{color:#fff;text-decoration:underline;text-decoration-color:var(--g);text-decoration-thickness:2px;text-underline-offset:4px}
+</style>
+</head>
+<body>
+
+<!-- GATE: removed 15 Jun for user testing (see live oracle.html). Preview file — restore gate + noindex per README before launch. -->
+
+<div class="top">
+  <span class="brand" onclick="goHome()" title="back to the start">&larr; THE DADOSPHERE <span style="color:var(--g)">_</span> beta</span>
+  <span class="nav"><span onclick="openPanel('faq')">What the FAQ</span><span onclick="openPanel('support')">Support</span></span>
+</div>
+
+<div id="oracle">
+<main>
+  <div class="one">
+
+    <!-- THE ASK — the hero -->
+    <div class="askwrap">
+      <div class="askline">
+        <span class="p">&gt;</span>
+        <input id="ask" autocomplete="off" spellcheck="false" aria-label="ask the dadosphere">
+        <span class="ghost" id="ghost">ask the dadosphere</span>
+        <span class="cursor" id="cur"></span>
+      </div>
+      <!-- framer nudge (progressive disclosure) -->
+      <div class="framenudge" id="framenudge" onclick="openFramer()">Stuck is ok — take it a line at a time &rarr;</div>
+      <!-- the framer -->
+      <div id="framer">
+        <input id="f1" placeholder="set the scene — &#8220;dad of two&#8221;, &#8220;just divorced&#8221;, &#8220;hate my job&#8221;">
+        <input id="f2" placeholder="what&#8217;s the challenge? — &#8220;I&#8217;m feeling low&#8221;, &#8220;I&#8217;m in debt&#8221;, &#8220;I&#8217;m in love&#8221;">
+        <input id="f3" placeholder="what would help to hear? — &#8220;journeys out of debt&#8221;, &#8220;becoming your best self&#8221;">
+        <div class="go" onclick="askFramed()">[ask]</div>
+      </div>
+    </div>
+
+    <!-- demoted stat + citation — quiet, below the ask -->
+    <div class="context">80% of men said they had a tough question and nowhere to ask it.<sup>*</sup></div>
+    <div class="cite">*Dadosphere research &middot; 509 men &middot; 2026</div>
+
+    <!-- the response loop renders here -->
+    <div id="res"></div>
+  </div>
+</main>
+
+<div class="footer">
+  <div class="pills">
+    <div class="pill" onclick="openGetStrength()">
+      <span class="pt">Get strength</span><span class="ps">read what 500+ men shared</span>
+    </div>
+    <div class="pill" onclick="giveStrength()">
+      <span class="pt">Give strength</span><span class="ps">add yours, anonymously</span>
+    </div>
+  </div>
+  <div class="anon">
+    The Dadosphere is 100% anonymous.<br>
+    <span class="mono">Cookies are for monsters.</span>
+  </div>
+</div>
+</div><!-- /oracle -->
+
+<!-- GET STRENGTH — one space, two tabs: Experience (answers) + Directory (resources) -->
+<div class="panel" id="p-getstrength">
+  <div class="back" onclick="goHome()">&larr; back</div>
+  <div class="pin">
+    <div class="tabs">
+      <div class="tab on" id="tab-exp" onclick="switchTab('exp')">Experience</div>
+      <div class="tab" id="tab-dir" onclick="switchTab('dir')">Directory</div>
+    </div>
+
+    <!-- EXPERIENCE: the searchable gallery of verbatim answers -->
+    <div id="view-exp">
+      <div class="tabhead">
+        <h2>search the answers</h2>
+        <span class="addv" onclick="giveStrength()">add your answer &rarr; give strength</span>
+      </div>
+      <div class="count" id="ans-count" style="color:var(--ink2);font-size:12.5px;margin-top:2px">&nbsp;</div>
+      <input id="gsearch" placeholder="search the answers" autocomplete="off" aria-label="search the answers">
+      <div class="chips" id="chips"></div>
+      <div class="cards" id="cards"></div>
+      <div class="more" id="more" style="display:none">
+        <span class="m1" onclick="loadDir()">[more]</span><span class="m2" onclick="giveStrength()">get more strength (give strength) &rarr;</span>
+      </div>
+    </div>
+
+    <!-- DIRECTORY: browsable projects, programmes, advisory services, centres -->
+    <div id="view-dir" style="display:none">
+      <div class="tabhead">
+        <h2>the directory</h2>
+        <span class="addv" onclick="nominate()">know one we&#8217;re missing? &rarr;</span>
+      </div>
+      <div class="count" id="res-count" style="color:var(--ink2);font-size:12.5px;margin-top:2px">projects, programmes, advisory services and centres — always available.</div>
+      <input id="rsearch" placeholder="search the directory" autocomplete="off" aria-label="search the directory">
+      <div class="chips" id="rchips"></div>
+      <div class="cards" id="rcards"></div>
+      <div class="more" id="rmore" style="display:none"><span class="m1" onclick="loadResources()">[more]</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- FAQ -->
+<div class="panel" id="p-faq">
+  <div class="back" onclick="goHome()">&larr; back</div>
+  <div class="pin">
+    <h2>What the FAQ</h2>
+    <div style="height:18px"></div>
+    <h3>What is the Dadosphere?</h3>
+    <p>A social experiment in collective intelligence and lived experience — built to answer the questions men carry alone. Not a therapy service. Not a chatbot. Not advice. When you ask a question, you receive anonymous lived experience from real men, semantically matched to the themes in what you asked. Adjacent honesty, not easy answers.</p>
+    <h3>How does it work?</h3>
+    <p>You ask a question. The Dadosphere uses semantic matching to find responses from real men whose experience connects to what you're asking about. You get a snippet — not an answer, a reflection — and you can ask for another. You also get three practical signposts: something you can listen to now, something advisory if you want a human, and something specific to your situation. None of it tells you what to do. All of it gives you something to think with.</p>
+    <h3>Who answered?</h3>
+    <p>500+ men who responded to our research — answering ten honest questions across themes from masculinity and fatherhood to struggle, what helped, and legacy. Their answers are anonymised, stored on UK servers, and matched by theme — not by name, age, or any identifying information. Some are dads. Some aren't. All of them were honest.</p>
+    <h3>Is it anonymous?</h3>
+    <p>Yes — completely. No cookies. No tracking. No sign-up. No data stored about you or your question. We never knew who you were, and we never will. What you ask here stays here. Cookies are for monsters.</p>
+    <h3>Who built it?</h3>
+    <p><b style="color:#fff">Sam Conniff</b> — a dad in south London, and the author of <em>Be More Pirate</em>. He kept noticing the questions men don't get asked, so he asked them. 500+ men answered. This is what they said.</p>
+    <h3>Can I contribute?</h3>
+    <p>Yes. <span class="give" onclick="giveStrength()">Give strength &rarr;</span> Share your own lived experience, anonymously, for the next man who asks.</p>
+    <p class="dim" style="margin-top:30px">beta · launched Father's Day 2026 · made with AI · answered by men · method, evidence &amp; safeguarding: <a href="mailto:sam@thedadosphere.com?subject=ethics%20%26%20method">sam@thedadosphere.com</a></p>
+  </div>
+</div>
+
+<!-- GIVE STRENGTH (Typeform embed — lazily loaded). NOTE: form ID is a BLOCKER, see SITE_SPEC.md -->
+<div class="panel" id="p-give">
+  <div class="back" onclick="goHome()">&larr; back</div>
+  <div class="pin">
+    <h2>give strength</h2>
+    <div style="height:14px"></div>
+    <p>Share your own lived experience, anonymously, for the next man who asks. No name shown, no email shown — your words, verbatim.</p>
+    <div id="tf-embed"></div>
+  </div>
+</div>
+
+<!-- SUPPORT (now reached from the top-right nav) -->
+<div class="panel" id="p-support">
+  <div class="back" onclick="goHome()">&larr; back</div>
+  <div class="pin">
+    <h2>support</h2>
+    <div style="height:14px"></div>
+    <p>Ask anything here and what comes back is picked for what you actually said — including who to talk to, not a generic list. You don't have to ask first, though. If today is heavy, these three are real, and they're there now:</p>
+    <div class="siglist">
+      <b><a href="https://andysmanclub.co.uk" target="_blank" rel="noopener">Andy's Man Club</a></b> — a room of men, weekly, free, no referral<br>
+      <b><a href="https://www.thecalmzone.net" target="_blank" rel="noopener">CALM</a></b> — 0800 58 58 58, 5pm–midnight<br>
+      <b><a href="https://www.samaritans.org" target="_blank" rel="noopener">Samaritans</a></b> — 116 123, free, 24/7
+    </div>
+    <p class="dim" style="margin-top:28px">who could you actually say it to, this week?</p>
+  </div>
+</div>
+
+<script>
+/* ===================== PLAUSIBLE ===================== */
+function plsbl(e,opts){try{window.plausible&&window.plausible(e,opts)}catch(ex){}}
+
+/* ===================== CONFIG ===================== */
+const SB_URL='https://qbhdcajdspczccrmbjlx.supabase.co';
+const SB_KEY='sb_publishable_F-KLlYRNk5bnjGwH02pncg_Gax7BHU8';
+const FN=SB_URL+'/functions/v1';
+const H={apikey:SB_KEY,Authorization:'Bearer '+SB_KEY,'Content-Type':'application/json'};
+/* Founding Dads — Five Questions (form GYKhzxwT, confirmed live by Sam 15 Jun). Answer 5 Qs + responder signup. */
+const GIVE_STRENGTH_URL='https://sam774431.typeform.com/to/GYKhzxwT';
+
+/* ===================== ROLLING EXAMPLES ===================== */
+const EXAMPLES=[
+  'ask the dadosphere',
+  'how do I talk to my teenage son?',
+  'I feel like I’m failing as a dad',
+  'how do I make friends as a grown man?',
+  'my marriage feels flat — is that normal?',
+  'what do I do with the anger?',
+  'how do I be a better man than my father was?',
+  'I don’t know who I am outside of work'
+];
+let exIdx=0, exTimer=null;
+function startRoll(){
+  const g=document.getElementById('ghost');
+  exTimer=setInterval(()=>{
+    if(document.activeElement===askEl||askEl.value){return;}
+    g.classList.add('hide');
+    setTimeout(()=>{
+      exIdx=(exIdx+1)%EXAMPLES.length;
+      g.textContent=EXAMPLES[exIdx];
+      g.classList.remove('hide');
+    },460);
+  },3200);
+}
+function ghostOn(show){
+  const g=document.getElementById('ghost');
+  g.style.display=show?'block':'none';
+}
+
+/* ===================== THE FRAMER (progressive disclosure) ===================== */
+let framerShown=false, framerIdle=null, maxTyped=0;
+function showFramer(why){
+  if(framerShown)return; framerShown=true;
+  clearTimeout(framerIdle);
+  document.getElementById('framenudge').classList.add('show');
+  plsbl('framer_shown',{props:{trigger:why}});
+}
+function openFramer(){
+  const f=document.getElementById('framer');
+  if(f.classList.contains('on'))return;
+  f.classList.add('on');
+  plsbl('framer_opened');
+  try{document.getElementById('f1').focus();}catch(e){}
+}
+['f1','f2','f3'].forEach(id=>{
+  document.addEventListener('DOMContentLoaded',()=>{});
+});
+function askFramed(){
+  const v=id=>{const el=document.getElementById(id);return el?el.value.trim():'';};
+  const scene=v('f1'),challenge=v('f2'),help=v('f3');
+  const q=[help,challenge,scene].filter(Boolean).join(' — ');
+  if(!q)return;
+  document.getElementById('framer').classList.remove('on');
+  plsbl('framer_used');
+  ask(q);
+  try{window.scrollTo(0,document.getElementById('res').offsetTop-80);}catch(e){}
+}
+
+/* ===================== THE ORACLE ===================== */
+const res=document.getElementById('res');
+const askEl=document.getElementById('ask');
+let busy=false, currentQuery='', seen=[];
+
+askEl.addEventListener('keydown',e=>{
+  if(e.key==='Enter'){
+    if(['f1','f2','f3'].includes(e.target.id))return;
+    const q=askEl.value.trim();
+    if(q.length<2)return;
+    askEl.value='';
+    ask(q);
+  }
+});
+['f1','f2','f3'].forEach(id=>{
+  const el=document.getElementById(id);
+  if(el)el.addEventListener('keydown',e=>{if(e.key==='Enter')askFramed();});
+});
+
+/* hesitation/deletion detection on the main ask line */
+askEl.addEventListener('input',()=>{
+  const len=askEl.value.length;
+  document.getElementById('cur').style.display=len?'none':'inline-block';
+  ghostOn(!len);
+  if(len>maxTyped)maxTyped=len;
+  /* typed-then-deleted: wrote 8+, scrapped most of it back out */
+  if(!framerShown && maxTyped>=8 && len<=2){showFramer('deleted');}
+  clearTimeout(framerIdle);
+  if(!framerShown && len===0){framerIdle=setTimeout(()=>showFramer('idle'),5000);}
+});
+askEl.addEventListener('focus',()=>{
+  if(!framerShown && !askEl.value){clearTimeout(framerIdle);framerIdle=setTimeout(()=>showFramer('idle'),5000);}
+});
+
+async function searchOracle(q,exclude){
+  try{
+    const r=await fetch(FN+'/oracle-search',{method:'POST',headers:H,
+      body:JSON.stringify({query:q,exclude_ids:exclude})});
+    return await r.json();
+  }catch(e){return {error:String(e)}}
+}
+async function ask(q){
+  if(busy)return; busy=true;
+  currentQuery=q; seen=[];
+  plsbl('question_submitted');
+  loading();
+  const data=await searchOracle(q,seen);
+  busy=false;
+  render(data);
+}
+async function another(){
+  if(busy)return; busy=true;
+  plsbl('another_answer_requested');
+  loading();
+  const data=await searchOracle(currentQuery,seen);
+  busy=false;
+  render(data);
+}
+function loading(){res.innerHTML='<div class="h">consulting the dadosphere<span class="cursor"></span></div>';}
+
+function typeInto(el,t,done){
+  const D=Math.min(2500,Math.max(500,t.length*14)),t0=performance.now();
+  (function f(now){
+    const p=Math.min(1,((now||performance.now())-t0)/D);
+    el.textContent=t.slice(0,Math.ceil(p*t.length));
+    if(p<1)requestAnimationFrame(f);else done&&done();
+  })(t0);
+}
+function renderSafety(data){
+  if(!data||!data.safety)return;
+  const s=data.safety;
+  const box=document.createElement('div');box.className='saf';
+  const h=document.createElement('div');h.className='safh';h.textContent=s.heading||'';box.appendChild(h);
+  const m=document.createElement('div');m.className='safm';m.textContent=s.message||'';box.appendChild(m);
+  if(s.line&&s.line.url){
+    const a=document.createElement('a');a.className='safl';a.href=s.line.url;a.target='_blank';a.rel='noopener';
+    a.textContent=s.line.name+' →';
+    a.addEventListener('click',()=>plsbl('resource_link_clicked',{props:{resource_name:s.line.name}}));
+    box.appendChild(a);
+  }
+  res.appendChild(box);
+  plsbl('safety_shown',{props:{kind:s.kind||'crisis'}});
+}
+function render(data){
+  res.innerHTML='';
+  if(!data||data.error){res.innerHTML='<div class="h">something went wrong reaching the dadosphere — try again in a moment.</div>';return;}
+  renderSafety(data);
+  if(!data.answer){
+    const m=document.createElement('div');m.className='h';
+    m.textContent=seen.length?"that's as far as the answers go on this one. ask it another way, or add your own below.":"nothing close enough yet — try asking it in different words.";
+    res.appendChild(m);
+    renderContribute(data.theme&&data.theme.id);
+    return;
+  }
+  const ans=data.answer, theme=data.theme||{}, resources=data.resources||[];
+  if(ans.id!=null)seen.push(ans.id);
+  const a=document.createElement('div');a.className='a';res.appendChild(a);
+  typeInto(a,'“'+ans.text+'”',()=>{
+    plsbl('answer_served',{props:{answer_theme:(theme.name||'unknown')}});
+    if(ans.demographic){const d=document.createElement('div');d.className='demo';d.textContent=ans.demographic;res.appendChild(d);}
+    if(theme.name){const th=document.createElement('div');th.className='theme';th.textContent=theme.name.toLowerCase();res.appendChild(th);}
+    if(resources.length){
+      const rl=document.createElement('div');rl.className='reslist';
+      const rh=document.createElement('div');rh.className='rh';rh.textContent='three things to take with you';rl.appendChild(rh);
+      resources.forEach(r=>{
+        const it=document.createElement('div');it.className='resitem';
+        if(r.slot){const k=document.createElement('span');k.className='rk';k.textContent=r.slot;it.appendChild(k);}
+        const link=document.createElement('a');link.href=r.url;link.target='_blank';link.rel='noopener';link.textContent=r.name;
+        link.addEventListener('click',()=>plsbl('resource_link_clicked',{props:{resource_name:r.name}}));
+        it.appendChild(link);
+        if(r.description){const dd=document.createElement('div');dd.className='rd';dd.textContent=r.description;it.appendChild(dd);}
+        rl.appendChild(it);
+      });
+      res.appendChild(rl);
+    }
+    const dir=document.createElement('div');dir.className='dir';
+    dir.innerHTML='<span>browse all the answers &amp; the directory</span>';
+    dir.firstChild.onclick=openGetStrength;
+    res.appendChild(dir);
+    const ag=document.createElement('div');ag.className='again';
+    ag.innerHTML='was that useful? want another? <span class="yes">[yes]</span>';
+    ag.querySelector('.yes').onclick=another;
+    res.appendChild(ag);
+    renderContribute(theme.id);
+  });
+}
+
+const THEME_Q={
+  1:['belief_wrong',"What's something you believed about being a man that turned out to be wrong?"],
+  2:['wish_conversation',"What's the conversation you most wish you could have, and with whom?"],
+  3:['most_lost',"When have you felt most lost, ashamed, or like you were getting it badly wrong — and what did you do?"],
+  4:['advice_changed',"What's one piece of advice that actually changed the way you live?"],
+  5:['wish_conversation',"What's the conversation you most wish you could have, and with whom?"],
+  6:['pass_on',"What would you want to pass on to a younger man who's where you were once?"],
+  7:['becoming',"What kind of man are you trying to become?"],
+  8:['becoming',"What kind of man are you trying to become?"],
+  9:['pass_on',"What would you want to pass on to a younger man who's where you were once?"],
+  10:['pass_on',"What would you want to pass on to a younger man who's where you were once?"]
+};
+const DEFAULT_Q=['becoming',"What kind of man are you trying to become?"];
+function renderContribute(themeId){
+  const map=THEME_Q[themeId]||DEFAULT_Q;
+  const wrap=document.createElement('div');wrap.className='contrib';
+  wrap.innerHTML=
+    '<div class="invite">The best way to understand something is to teach it. '+
+    '<span class="open">Add your voice.</span></div>'+
+    '<div class="form">'+
+      '<div class="cq">&gt; '+map[1]+'</div>'+
+      '<input class="hpf" tabindex="-1" autocomplete="off" aria-hidden="true">'+
+      '<textarea rows="3" maxlength="5000" placeholder="your answer — verbatim, anonymous" aria-label="your answer"></textarea>'+
+      '<div class="cgo">[submit]</div>'+
+      '<div class="cmsg"></div>'+
+    '</div>';
+  res.appendChild(wrap);
+  const form=wrap.querySelector('.form');
+  const open=wrap.querySelector('.open');
+  const hp=wrap.querySelector('.hpf');
+  const ta=wrap.querySelector('textarea');
+  const cgo=wrap.querySelector('.cgo');
+  const cmsg=wrap.querySelector('.cmsg');
+  open.onclick=()=>{if(form.classList.contains('on'))return;form.classList.add('on');plsbl('contribute_clicked');ta.focus();};
+  cgo.onclick=async()=>{
+    if(hp.value)return;
+    const txt=ta.value.trim();
+    if(txt.length<10){cmsg.textContent='a bit more — give the next man something to go on.';return;}
+    cmsg.textContent='…';
+    try{
+      const r=await fetch(FN+'/contribute',{method:'POST',headers:H,body:JSON.stringify({answer_text:txt,question_key:map[0],theme_id:themeId||null})});
+      const j=await r.json();
+      if(r.ok&&j.ok){plsbl('contribution_submitted');cmsg.textContent='got it. a human reads it before it ever goes public. thank you.';ta.value='';ta.disabled=true;cgo.style.display='none';}
+      else{cmsg.textContent="that didn't go through — try again, or email sam@thedadosphere.com";}
+    }catch(e){cmsg.textContent="that didn't go through — try again, or email sam@thedadosphere.com";}
+  };
+}
+
+/* ===================== GIVE STRENGTH (Typeform) ===================== */
+let tfLoaded=false;
+function giveStrength(){
+  plsbl('give_strength_clicked');
+  openPanel('give');
+  if(!tfLoaded){
+    tfLoaded=true;
+    const c=document.getElementById('tf-embed');
+    const f=document.createElement('iframe');
+    f.className='tf-frame';f.src=GIVE_STRENGTH_URL;f.title='Give strength — share your experience';
+    f.setAttribute('allow','camera; microphone; autoplay; encrypted-media;');
+    c.appendChild(f);
+  }
+}
+function nominate(){window.location.href='mailto:sam@thedadosphere.com?subject=A%20resource%20you%27re%20missing';}
+
+/* ===================== GET STRENGTH SPACE: tabs ===================== */
+function openGetStrength(tab){
+  plsbl('get_strength_opened');
+  openPanel('getstrength');
+  switchTab(tab||'exp');
+  if(!dirInit)initAnswers();
+  if(!dirLoaded){dirLoaded=true;loadDir();liveCount();}
+}
+function switchTab(t){
+  document.getElementById('tab-exp').classList.toggle('on',t==='exp');
+  document.getElementById('tab-dir').classList.toggle('on',t==='dir');
+  document.getElementById('view-exp').style.display=t==='exp'?'block':'none';
+  document.getElementById('view-dir').style.display=t==='dir'?'block':'none';
+  plsbl('tab_switched',{props:{tab:t}});
+  if(t==='dir'&&!resInit)initResources();
+  if(t==='dir'&&!resLoaded){resLoaded=true;loadResources();}
+}
+
+/* ===================== EXPERIENCE (answers) ===================== */
+const THEMES=[[0,"all"],[1,"masculinity & identity"],[2,"fatherhood & family"],[3,"struggle & shame"],[4,"what helped"],[5,"connection & isolation"],[6,"legacy & purpose"],[7,"becoming"],[8,"body & health"],[9,"work & money"],[10,"humour"]];
+let dTheme=0,dOffset=0,dq='',dirInit=false,dirLoaded=false;
+/* fuller, best-expressed answers lead: order by length desc (proxy for substance) so the top ones land */
+const DIR_SEL='answers?select=answer_text,themes(name),questions(canonical)&curation_status=eq.approved&answer_text=not.is.null&order=answer_len.desc';
+function initAnswers(){
+  dirInit=true;
+  const chips=document.getElementById('chips');
+  THEMES.forEach(([id,name])=>{
+    const c=document.createElement('div');c.className='chip'+(id===0?' on':'');c.textContent=name;
+    c.onclick=()=>{dTheme=id;dOffset=0;document.getElementById('cards').innerHTML='';[...chips.children].forEach(x=>x.classList.remove('on'));c.classList.add('on');loadDir();};
+    chips.appendChild(c);
+  });
+  let t=null;
+  document.getElementById('gsearch').addEventListener('input',e=>{clearTimeout(t);t=setTimeout(()=>{dq=e.target.value.trim();dOffset=0;document.getElementById('cards').innerHTML='';loadDir();},420);});
+}
+async function liveCount(){
+  try{
+    const r=await fetch(SB_URL+'/rest/v1/answers?select=id&curation_status=eq.approved&answer_text=not.is.null&limit=1',{headers:{...H,Prefer:'count=exact'}});
+    const cr=r.headers.get('content-range')||'';
+    const total=cr.split('/')[1];
+    if(total&&!isNaN(+total))document.getElementById('ans-count').textContent=(+total).toLocaleString()+' answers and counting';
+  }catch(e){}
+}
+async function loadDir(){
+  document.getElementById('more').style.display='none';
+  let f=DIR_SEL+(dTheme?'&theme_id=eq.'+dTheme:'');
+  if(dq)f+='&tsv=wfts.'+encodeURIComponent(dq.replace(/[^\w\s]/g,' '));
+  f+='&limit=12&offset='+dOffset;
+  const grid=document.getElementById('cards');
+  try{
+    const r=await fetch(SB_URL+'/rest/v1/'+f,{headers:H});
+    const rows=await r.json();
+    dOffset+=rows.length;
+    rows.forEach(row=>{
+      if(!row.answer_text)return;
+      const d=document.createElement('div');d.className='card';
+      const qq=document.createElement('div');qq.className='qq';
+      if(row.questions&&row.questions.canonical)qq.textContent='> '+row.questions.canonical;
+      const aa=document.createElement('div');aa.className='aa';aa.textContent='“'+row.answer_text+'”';
+      const hm=document.createElement('div');hm.className='hm';
+      hm.textContent=(row.themes&&row.themes.name?row.themes.name.toLowerCase():'verbatim')+' · one of 500+ men';
+      if(qq.textContent)d.appendChild(qq);
+      d.appendChild(aa);d.appendChild(hm);
+      grid.appendChild(d);
+    });
+    if(rows.length===12)document.getElementById('more').style.display='flex';
+    if(!grid.children.length)grid.innerHTML='<div class="h" style="color:var(--ink3);font-size:13px">no answers match that yet.</div>';
+  }catch(e){grid.innerHTML='<div class="h" style="color:var(--ink3);font-size:13px">could not load the answers — try again.</div>';}
+}
+
+/* ===================== DIRECTORY (resources) ===================== */
+let rTheme=0,rOffset=0,rq='',resInit=false,resLoaded=false;
+const RES_SEL='resources?select=name,url,what_it_is,category,format,urgency_tier,theme_ids&status=eq.live&order=name.asc';
+function initResources(){
+  resInit=true;
+  const chips=document.getElementById('rchips');
+  THEMES.forEach(([id,name])=>{
+    const c=document.createElement('div');c.className='chip'+(id===0?' on':'');c.textContent=name;
+    c.onclick=()=>{rTheme=id;rOffset=0;document.getElementById('rcards').innerHTML='';[...chips.children].forEach(x=>x.classList.remove('on'));c.classList.add('on');loadResources();};
+    chips.appendChild(c);
+  });
+  let t=null;
+  document.getElementById('rsearch').addEventListener('input',e=>{clearTimeout(t);t=setTimeout(()=>{rq=e.target.value.trim();rOffset=0;document.getElementById('rcards').innerHTML='';loadResources();},420);});
+}
+async function loadResources(){
+  document.getElementById('rmore').style.display='none';
+  let f=RES_SEL;
+  if(rTheme)f+='&theme_ids=cs.{'+rTheme+'}';
+  if(rq)f+='&name=ilike.*'+encodeURIComponent(rq)+'*';
+  f+='&limit=18&offset='+rOffset;
+  const grid=document.getElementById('rcards');
+  try{
+    const r=await fetch(SB_URL+'/rest/v1/'+f,{headers:H});
+    const rows=await r.json();
+    rOffset+=rows.length;
+    rows.forEach(row=>{
+      const d=document.createElement('div');d.className='card rcard';
+      const rn=document.createElement('div');rn.className='rn';
+      const a=document.createElement('a');a.href=row.url;a.target='_blank';a.rel='noopener';a.textContent=row.name;
+      a.addEventListener('click',()=>plsbl('resource_link_clicked',{props:{resource_name:row.name}}));
+      rn.appendChild(a);
+      const rw=document.createElement('div');rw.className='rw';rw.textContent=row.what_it_is||'';
+      const rt=document.createElement('div');rt.className='rt';rt.textContent=[row.category,row.format].filter(Boolean).join(' · ');
+      d.appendChild(rn);d.appendChild(rw);d.appendChild(rt);
+      grid.appendChild(d);
+    });
+    if(rows.length===18)document.getElementById('rmore').style.display='flex';
+    if(!grid.children.length)grid.innerHTML='<div class="h" style="color:var(--ink3);font-size:13px">nothing in the directory matches that yet.</div>';
+  }catch(e){grid.innerHTML='<div class="h" style="color:var(--ink3);font-size:13px">could not load the directory — try again.</div>';}
+}
+
+/* ===================== PANELS ===================== */
+function openPanel(k){closePanels();const p=document.getElementById('p-'+k);if(p)p.style.display='block';}
+function closePanels(){document.querySelectorAll('.panel').forEach(p=>p.style.display='none');}
+function goHome(){closePanels();if(res)res.innerHTML='';if(askEl)askEl.value='';maxTyped=0;ghostOn(true);try{window.scrollTo(0,0);}catch(e){}}
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closePanels();});
+
+/* boot */
+startRoll();
+</script>
+</body>
+</html>
