@@ -187,8 +187,8 @@
 </script>
 
 <div class="top">
-  <span class="brand">THE DADOSPHERE <span style="color:var(--g)">_</span> beta</span>
-  <span class="nav" onclick="openPanel('faq')">FAQ</span>
+  <span class="brand" onclick="goHome()" style="cursor:pointer" title="back to the start">&larr; THE DADOSPHERE <span style="color:var(--g)">_</span> beta</span>
+  <span class="nav" onclick="openPanel('faq')">What the FAQ</span>
 </div>
 
 <!-- the Dadosphere -->
@@ -226,7 +226,7 @@
   <div class="pin">
     <h2>the directory</h2>
     <input id="gsearch" placeholder="search the answers" autocomplete="off" aria-label="search the answers">
-    <div class="legend">every answer verbatim · anonymous · one of 509 men · nothing edited</div>
+    <div class="legend">every answer verbatim · anonymous · one of 500+ men · nothing edited</div>
     <div class="chips" id="chips"></div>
     <div class="cards" id="cards"></div>
     <div class="more" id="more" style="display:none" onclick="loadDir()">[more]</div>
@@ -237,7 +237,7 @@
 <div class="panel" id="p-faq">
   <div class="x" onclick="closePanels()">[close]</div>
   <div class="pin">
-    <h2>FAQ</h2>
+    <h2>What the FAQ</h2>
 
     <h3>What is the Dadosphere?</h3>
     <p>A social experiment in collective intelligence and lived experience — built to answer the questions men carry alone. Not a therapy service. Not a chatbot. Not advice. When you ask a question, you receive anonymous lived experience from real men, semantically matched to the themes in what you asked. Adjacent honesty, not easy answers.</p>
@@ -252,13 +252,13 @@
     <p>No cookies. No tracking. No sign-up. No data stored about you or your question. What you ask here stays here. Cookies are for monsters.</p>
 
     <h3>Who built it?</h3>
-    <p><b style="color:#fff">Sam Conniff</b> — a dad in south London, and the author of <em>Be More Pirate</em>. He kept noticing the questions men don't get asked, so he asked them. 509 men answered. This is what they said.</p>
+    <p><b style="color:#fff">Sam Conniff</b> — a dad in south London, and the author of <em>Be More Pirate</em>. He kept noticing the questions men don't get asked, so he asked them. 500+ men answered. This is what they said.</p>
 
     <h3>Can I contribute?</h3>
     <p>Yes. <span class="give" onclick="giveStrength()">Give strength &rarr;</span> Share your own lived experience, anonymously, for the next man who asks.</p>
 
     <h3>If today is heavy</h3>
-    <p>This covers hard ground. If something here lands heavy, or you're struggling right now, these are real people, today:</p>
+    <p>Every question here comes back with signposts picked for what you said — including a human to talk to. And whether or not you ask, these three are real, and they're there now:</p>
     <div class="siglist">
       <b><a href="https://andysmanclub.co.uk" target="_blank" rel="noopener">Andy's Man Club</a></b> — a room of men, weekly, free, no referral<br>
       <b><a href="https://www.thecalmzone.net" target="_blank" rel="noopener">CALM</a></b> — 0800 58 58 58, 5pm–midnight<br>
@@ -284,7 +284,7 @@
   <div class="x" onclick="closePanels()">[close]</div>
   <div class="pin">
     <h2>support</h2>
-    <p>This is a beta, and it covers hard ground. If something here lands heavy, or you're struggling right now, these are real people, today:</p>
+    <p>Ask anything here and what comes back is picked for what you actually said — including who to talk to, not a generic list. You don't have to ask first, though. If today is heavy, these three are real, and they're there now:</p>
     <div class="siglist">
       <b><a href="https://andysmanclub.co.uk" target="_blank" rel="noopener">Andy's Man Club</a></b> — a room of men, weekly, free, no referral<br>
       <b><a href="https://www.thecalmzone.net" target="_blank" rel="noopener">CALM</a></b> — 0800 58 58 58, 5pm–midnight<br>
@@ -562,7 +562,7 @@ async function loadDir(){
       if(row.questions&&row.questions.canonical)qq.textContent='> '+row.questions.canonical;
       const aa=document.createElement('div');aa.className='aa';aa.textContent='“'+row.answer_text+'”';
       const hm=document.createElement('div');hm.className='hm';
-      hm.textContent=(row.themes&&row.themes.name?row.themes.name.toLowerCase():'verbatim')+' · one of 509 men';
+      hm.textContent=(row.themes&&row.themes.name?row.themes.name.toLowerCase():'verbatim')+' · one of 500+ men';
       if(qq.textContent)d.appendChild(qq);
       d.appendChild(aa);d.appendChild(hm);
       grid.appendChild(d);
@@ -575,6 +575,8 @@ async function loadDir(){
 /* ===================== PANELS ===================== */
 function openPanel(k){closePanels();const p=document.getElementById('p-'+k);if(p)p.style.display='block';}
 function closePanels(){document.querySelectorAll('.panel').forEach(p=>p.style.display='none');}
+/* back to the start — close any panel, clear the response loop, reset the ask line */
+function goHome(){closePanels();const r=document.getElementById('res');if(r)r.innerHTML='';const a=document.getElementById('ask');if(a)a.value='';try{window.scrollTo(0,0);}catch(e){}}
 document.addEventListener('keydown',e=>{if(e.key==='Escape')closePanels();});
 document.querySelectorAll('.panel').forEach(p=>p.addEventListener('click',e=>{if(e.target===p)closePanels();}));
 
