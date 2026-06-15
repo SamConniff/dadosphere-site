@@ -73,6 +73,11 @@
   #res .a{font-family:var(--monb);font-weight:700;font-size:clamp(18px,2.5vw,25px);line-height:1.55;max-width:760px;overflow-wrap:break-word}
   #res .demo{color:var(--ink2);font-size:12.5px;margin-top:16px}
   #res .theme{color:var(--ink3);font-size:12.5px;margin-top:6px;letter-spacing:.02em}
+  /* safety card — shown ONLY on genuine crisis / risk-to-others, and it LEADS the response */
+  #res .saf{border:1px solid var(--g);border-left-width:3px;padding:16px 18px;margin-bottom:28px;border-radius:2px;background:rgba(255,45,135,.05)}
+  #res .saf .safh{font-family:var(--monb);font-weight:700;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--g);margin-bottom:10px}
+  #res .saf .safm{font-size:14px;line-height:1.65;color:#fff}
+  #res .saf .safl{display:inline-block;margin-top:13px;font-size:14px;color:#fff;text-decoration:underline;text-decoration-color:var(--g);text-decoration-thickness:2px;text-underline-offset:4px}
   #res .reslist{margin-top:26px;border-top:1px solid var(--ink4);padding-top:18px}
   #res .reslist .rh{color:var(--ink3);font-size:11px;letter-spacing:.12em;text-transform:uppercase;margin-bottom:14px}
   #res .resitem{margin-bottom:15px;font-size:13.5px;line-height:1.55}
@@ -389,12 +394,30 @@ function typeInto(el,t,done){
   })(t0);
 }
 
+/* safety net — leads the response on genuine crisis / risk-to-others, above the answer. */
+function renderSafety(data){
+  if(!data||!data.safety)return;
+  const s=data.safety;
+  const box=document.createElement('div');box.className='saf';
+  const h=document.createElement('div');h.className='safh';h.textContent=s.heading||'';box.appendChild(h);
+  const m=document.createElement('div');m.className='safm';m.textContent=s.message||'';box.appendChild(m);
+  if(s.line&&s.line.url){
+    const a=document.createElement('a');a.className='safl';a.href=s.line.url;a.target='_blank';a.rel='noopener';
+    a.textContent=s.line.name+' →';
+    a.addEventListener('click',()=>plsbl('resource_link_clicked',{props:{resource_name:s.line.name}}));
+    box.appendChild(a);
+  }
+  res.appendChild(box);
+  plsbl('safety_shown',{props:{kind:s.kind||'crisis'}});
+}
+
 function render(data){
   res.innerHTML='';
   if(!data||data.error){
     res.innerHTML='<div class="h">something went wrong reaching the dadosphere — try again in a moment.</div>';
     return;
   }
+  renderSafety(data);
   if(!data.answer){
     /* no (further) match: never synthesise — offer to ask another way, and to contribute */
     const m=document.createElement('div');m.className='h';
