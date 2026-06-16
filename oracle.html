@@ -52,9 +52,13 @@
   #ask{background:transparent;border:none;outline:none;color:#fff;font-family:var(--mono);font-size:clamp(20px,3vw,30px);flex:1;min-width:0;position:relative;z-index:2}
   #ask::placeholder{color:var(--ink3)}
   /* rolling examples — a faint ghost over the empty input, cross-fading through real questions */
-  .ghost{position:absolute;left:28px;right:0;top:0;color:var(--ink3);pointer-events:none;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  .ghost{position:absolute;left:28px;right:44px;top:0;color:var(--ink3);pointer-events:none;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
          font-size:clamp(20px,3vw,30px);line-height:1.2;opacity:1;transition:opacity .45s ease;z-index:1}
   .ghost.hide{opacity:0}
+  /* submit arrow — makes it obvious you press to ask (esp. on mobile, where there's no visible Enter) */
+  .asksend{flex:0 0 auto;align-self:center;cursor:pointer;user-select:none;color:var(--ink3);font-size:clamp(22px,3vw,30px);line-height:1;padding:2px 4px;transition:color .2s,transform .15s;z-index:3}
+  .asksend:hover{color:var(--g)}
+  .asksend.live{color:var(--g);transform:translateX(2px)}
 
   /* the framer — progressive disclosure, hidden until hesitation/deletion */
   .framenudge{margin-top:20px;font-size:13px;color:var(--ink2);cursor:pointer;user-select:none;width:fit-content;
@@ -81,6 +85,9 @@
   #res .a{font-family:var(--monb);font-weight:700;font-size:clamp(18px,2.5vw,25px);line-height:1.55;max-width:760px;overflow-wrap:break-word}
   #res .demo{color:var(--ink2);font-size:12.5px;margin-top:16px}
   #res .theme{color:var(--ink3);font-size:12.5px;margin-top:6px;letter-spacing:.02em}
+  /* reflection reminder — reframes a theme-match as another man's experience, not an answer */
+  #res .reflect{color:var(--ink2);font-size:12.5px;line-height:1.65;margin-top:18px;max-width:680px;border-left:2px solid var(--ink4);padding-left:14px}
+  #res .reflect b{color:var(--ink1);font-weight:500}
   #res .saf{border:1px solid var(--g);border-left-width:3px;padding:16px 18px;margin-bottom:28px;border-radius:2px;background:rgba(255,45,135,.05)}
   #res .saf .safh{font-family:var(--monb);font-weight:700;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--g);margin-bottom:10px}
   #res .saf .safm{font-size:14px;line-height:1.65;color:#fff}
@@ -181,6 +188,27 @@
   #gate #gpw::placeholder{color:var(--ink3);letter-spacing:normal}
   #gate .gcur{display:inline-block;width:.5em;height:2px;background:var(--g);animation:blink 1.05s steps(1) infinite}
   #gate .gmsg{color:var(--ink2);font-size:12.5px;margin-top:16px;min-height:16px;letter-spacing:.02em}
+
+  /* ---- mobile: smaller hero text so examples fit, comfortable spacing ---- */
+  @media (max-width:600px){
+    main{padding:30px 18px}
+    .askline{font-size:18px;gap:8px}
+    #ask{font-size:18px}
+    .ghost{font-size:18px;left:22px;right:38px}
+    .asksend{font-size:21px}
+    .context{font-size:13px;margin-top:30px}
+    .cite{font-size:11px}
+    #res{margin-top:34px}
+    #res .a{font-size:17px}
+    #res .qline{font-size:12px}
+    .top{padding:16px 18px}
+    .top .nav{gap:16px}
+    .footer{padding:26px 18px 30px}
+    .pills{gap:10px}
+    .pill{min-width:0;width:100%;max-width:320px}
+    .panel .pin{padding:54px 18px 80px}
+    .cards{grid-template-columns:1fr}
+  }
 </style>
 </head>
 <body>
@@ -234,6 +262,7 @@
         <input id="ask" autocomplete="off" spellcheck="false" aria-label="ask the dadosphere">
         <span class="ghost" id="ghost">ask the dadosphere</span>
         <span class="cursor" id="cur"></span>
+        <span class="asksend" id="asksend" onclick="submitAsk()" title="ask the dadosphere" role="button" aria-label="ask">&rarr;</span>
       </div>
       <!-- framer nudge (progressive disclosure) -->
       <div class="framenudge" id="framenudge" onclick="openFramer()">Stuck is ok — take it a line at a time &rarr;</div>
@@ -349,13 +378,18 @@
   <div class="pin">
     <h2>support</h2>
     <div style="height:14px"></div>
-    <p>Ask anything here and what comes back is picked for what you actually said — including who to talk to, not a generic list. You don't have to ask first, though. If today is heavy, these three are real, and they're there now:</p>
+    <p>Ask anything here and what comes back is matched to what you actually said — including who to talk to. You don't have to ask first, though. These are real and they're there now — from a room full of blokes to someone on the end of a line:</p>
     <div class="siglist">
-      <b><a href="https://andysmanclub.co.uk" target="_blank" rel="noopener">Andy's Man Club</a></b> — a room of men, weekly, free, no referral<br>
-      <b><a href="https://www.thecalmzone.net" target="_blank" rel="noopener">CALM</a></b> — 0800 58 58 58, 5pm–midnight<br>
-      <b><a href="https://www.samaritans.org" target="_blank" rel="noopener">Samaritans</a></b> — 116 123, free, 24/7
+      <b><a href="https://andysmanclub.co.uk" target="_blank" rel="noopener">Andy's Man Club</a></b> — free peer talking groups for men, every Monday, no referral<br>
+      <b><a href="https://talkclub.org" target="_blank" rel="noopener">Talk Club</a></b> — men's talking groups built on one question: "how are you, out of 10?"<br>
+      <b><a href="https://menssheds.org.uk" target="_blank" rel="noopener">Men's Sheds</a></b> — community workshops to make, mend and connect — 1,100+ across the UK<br>
+      <b><a href="https://www.thecalmzone.net" target="_blank" rel="noopener">CALM</a></b> — helpline &amp; webchat, 0800 58 58 58, 5pm–midnight, every day<br>
+      <b><a href="https://www.samaritans.org" target="_blank" rel="noopener">Samaritans</a></b> — 116 123, free, day or night, 24/7<br>
+      <b><a href="https://giveusashout.org" target="_blank" rel="noopener">Shout</a></b> — free 24/7 text support: text SHOUT to 85258<br>
+      <b><a href="https://hubofhope.co.uk" target="_blank" rel="noopener">Hub of Hope</a></b> — type your postcode, find support near you — the UK's biggest directory
     </div>
-    <p class="dim" style="margin-top:28px">who could you actually say it to, this week?</p>
+    <p style="margin-top:26px"><span class="give" onclick="openGetStrength('dir')">Search the full directory of men's provisions &rarr;</span></p>
+    <p class="dim" style="margin-top:24px">who could you actually say it to, this week?</p>
   </div>
 </div>
 
@@ -432,17 +466,22 @@ function askFramed(){
 /* ===================== THE ORACLE ===================== */
 const res=document.getElementById('res');
 const askEl=document.getElementById('ask');
-let busy=false, currentQuery='', seen=[];
+let busy=false, currentQuery='', seen=[], reflectFullShown=false;
 
 askEl.addEventListener('keydown',e=>{
   if(e.key==='Enter'){
     if(['f1','f2','f3'].includes(e.target.id))return;
-    const q=askEl.value.trim();
-    if(q.length<2)return;
-    askEl.value='';
-    ask(q);
+    submitAsk();
   }
 });
+/* shared submit — used by Enter and by the visible arrow */
+function submitAsk(){
+  const q=askEl.value.trim();
+  if(q.length<2){try{askEl.focus();}catch(e){}return;}
+  askEl.value='';
+  document.getElementById('asksend').classList.remove('live');
+  ask(q);
+}
 ['f1','f2','f3'].forEach(id=>{
   const el=document.getElementById(id);
   if(el)el.addEventListener('keydown',e=>{if(e.key==='Enter')askFramed();});
@@ -452,6 +491,7 @@ askEl.addEventListener('keydown',e=>{
 askEl.addEventListener('input',()=>{
   const len=askEl.value.length;
   document.getElementById('cur').style.display=len?'none':'inline-block';
+  document.getElementById('asksend').classList.toggle('live',len>=2);
   ghostOn(!len);
   if(len>maxTyped)maxTyped=len;
   /* typed-then-deleted: wrote 8+, scrapped most of it back out */
@@ -530,6 +570,13 @@ function render(data){
     plsbl('answer_served',{props:{answer_theme:(theme.name||'unknown')}});
     if(ans.demographic){const d=document.createElement('div');d.className='demo';d.textContent=ans.demographic;res.appendChild(d);}
     if(theme.name){const th=document.createElement('div');th.className='theme';th.textContent=theme.name.toLowerCase();res.appendChild(th);}
+    const rf=document.createElement('div');rf.className='reflect';
+    if(!reflectFullShown){reflectFullShown=true;
+      rf.innerHTML='The Dadosphere doesn&#8217;t answer you &mdash; men do. What comes back is another man&#8217;s experience, matched to the themes in your question &mdash; <b>not advice, an answer, or an opinion.</b> Less artificial intelligence, more the honesty of the pub, the touchline, the towpath. Take it with you.';
+    } else {
+      rf.innerHTML='An experience, not an answer. <b>Take it into your thinking.</b>';
+    }
+    res.appendChild(rf);
     if(resources.length){
       const rl=document.createElement('div');rl.className='reslist';
       const rh=document.createElement('div');rh.className='rh';rh.textContent='three things to take with you';rl.appendChild(rh);
@@ -549,8 +596,9 @@ function render(data){
     dir.firstChild.onclick=openGetStrength;
     res.appendChild(dir);
     const ag=document.createElement('div');ag.className='again';
-    ag.innerHTML='was that useful? want another? <span class="yes">[yes]</span>';
-    ag.querySelector('.yes').onclick=another;
+    ag.innerHTML='keep going &mdash; <span class="yes" data-a="more">see another response</span> to your question, or <span class="yes" data-a="new">ask something else</span>.';
+    ag.querySelector('[data-a="more"]').onclick=another;
+    ag.querySelector('[data-a="new"]').onclick=()=>{goHome();try{askEl.focus();}catch(e){}};
     res.appendChild(ag);
     renderContribute(theme.id);
   });
