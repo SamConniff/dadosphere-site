@@ -31,6 +31,9 @@
   ::selection{background:var(--g);color:#000}
   a{color:var(--ink2)}
   .u{text-decoration:underline;text-decoration-color:var(--g);text-decoration-thickness:2px;text-underline-offset:5px}
+  /* 4.1 — anything that's actually a link gets the pink underline so it reads as tappable */
+  .ulink{text-decoration:underline;text-decoration-color:var(--g);text-decoration-thickness:2px;text-underline-offset:4px;cursor:pointer;color:#fff}
+  .ulink:hover{color:var(--g)}
   .cursor{display:inline-block;width:.55em;height:2px;background:var(--g);vertical-align:baseline;margin-left:4px;animation:blink 1.05s steps(1) infinite}
   @keyframes blink{50%{opacity:0}}
   @keyframes fadein{to{opacity:1}}
@@ -47,18 +50,21 @@
   main{flex:1;display:flex;align-items:center;justify-content:center;padding:40px 26px}
   .one{width:min(820px,100%)}
   .askwrap{margin-top:8px}
-  .askline{display:flex;align-items:baseline;gap:12px;font-size:clamp(20px,3vw,30px);position:relative}
-  .askline .p{color:var(--g)}
-  #ask{background:transparent;border:none;outline:none;color:#fff;font-family:var(--mono);font-size:clamp(20px,3vw,30px);flex:1;min-width:0;position:relative;z-index:2}
-  #ask::placeholder{color:var(--ink3)}
+  .askline{display:flex;align-items:baseline;gap:8px;font-size:clamp(20px,3vw,30px);position:relative;cursor:text}
+  .askline .p{color:var(--g);flex:0 0 auto}
+  /* input auto-sizes to its content (JS) so the pink cursor sits right after the text, not pinned right */
+  #ask{background:transparent;border:none;outline:none;color:#fff;font-family:var(--mono);font-size:clamp(20px,3vw,30px);width:10px;min-width:0;flex:0 0 auto;caret-color:transparent;position:relative;z-index:2}
+  #ask::placeholder{color:transparent}
+  #askmirror{position:absolute;left:-9999px;top:0;visibility:hidden;white-space:pre;font-family:var(--mono);font-size:clamp(20px,3vw,30px)}
+  .askline .cursor{flex:0 0 auto;align-self:center}
   /* rolling examples — a faint ghost over the empty input, cross-fading through real questions */
-  .ghost{position:absolute;left:28px;right:44px;top:0;color:var(--ink3);pointer-events:none;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  .ghost{position:absolute;left:28px;right:8px;top:0;color:var(--ink3);pointer-events:none;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
          font-size:clamp(20px,3vw,30px);line-height:1.2;opacity:1;transition:opacity .45s ease;z-index:1}
   .ghost.hide{opacity:0}
-  /* submit arrow — makes it obvious you press to ask (esp. on mobile, where there's no visible Enter) */
-  .asksend{flex:0 0 auto;align-self:center;cursor:pointer;user-select:none;color:var(--ink3);font-size:clamp(22px,3vw,30px);line-height:1;padding:2px 4px;transition:color .2s,transform .15s;z-index:3}
-  .asksend:hover{color:var(--g)}
-  .asksend.live{color:var(--g);transform:translateX(2px)}
+  /* the Ask button — appears at the bottom once there's a question (one button, used by the framer too) */
+  #askbtn{display:none;margin-top:24px;font-family:var(--monb);font-weight:700;font-size:14px;color:#000;background:var(--g);border:none;border-radius:999px;padding:11px 28px;cursor:pointer;user-select:none;letter-spacing:.02em;transition:transform .15s}
+  #askbtn.show{display:inline-block;animation:fadein .3s ease}
+  #askbtn:hover{transform:translateY(-1px)}
 
   /* the framer — progressive disclosure, hidden until hesitation/deletion */
   .framenudge{margin-top:20px;font-size:13px;color:var(--ink2);cursor:pointer;user-select:none;width:fit-content;
@@ -67,6 +73,9 @@
   .framenudge:hover{color:#fff;text-decoration:underline;text-decoration-color:var(--g);text-decoration-thickness:2px;text-underline-offset:5px}
   #framer{display:none;margin-top:18px;max-width:680px}
   #framer.on{display:block;animation:fadein .45s ease}
+  #framer .fhead{font-size:13.5px;color:var(--ink1);margin-bottom:18px}
+  #framer .flab{display:block;font-size:13.5px;color:#fff;margin:18px 0 4px}
+  #framer .flab:first-of-type{margin-top:0}
   #framer input{display:block;width:100%;background:transparent;border:none;outline:none;border-bottom:1px solid var(--ink4);
                 color:#fff;font-family:var(--mono);font-size:15px;padding:11px 0;margin-bottom:4px}
   #framer input:focus{border-bottom-color:var(--ink2)}
@@ -85,6 +94,10 @@
   #res .a{font-family:var(--monb);font-weight:700;font-size:clamp(18px,2.5vw,25px);line-height:1.55;max-width:760px;overflow-wrap:break-word}
   #res .demo{color:var(--ink2);font-size:12.5px;margin-top:16px}
   #res .theme{color:var(--ink3);font-size:12.5px;margin-top:6px;letter-spacing:.02em}
+  /* matched-themes tag (top of the answer screen) */
+  #res .mtag{margin-bottom:22px}
+  #res .mtlab{color:var(--ink3);font-size:10.5px;letter-spacing:.13em;text-transform:uppercase;margin-bottom:6px}
+  #res .mtval{color:var(--ink1);font-size:13px;letter-spacing:.02em}
   /* reflection reminder — reframes a theme-match as another man's experience, not an answer */
   #res .reflect{color:var(--ink2);font-size:12.5px;line-height:1.65;margin-top:18px;max-width:680px;border-left:2px solid var(--ink4);padding-left:14px}
   #res .reflect b{color:var(--ink1);font-weight:500}
@@ -191,22 +204,22 @@
 
   /* ---- mobile: smaller hero text so examples fit, comfortable spacing ---- */
   @media (max-width:600px){
-    main{padding:30px 18px}
+    main{padding:48px 18px 30px}
     .askline{font-size:18px;gap:8px}
     #ask{font-size:18px}
-    .ghost{font-size:18px;left:22px;right:38px}
-    .asksend{font-size:21px}
+    #askmirror{font-size:18px}
+    .ghost{font-size:18px;left:22px}
     .context{font-size:13px;margin-top:30px}
     .cite{font-size:11px}
     #res{margin-top:34px}
     #res .a{font-size:17px}
     #res .qline{font-size:12px}
     .top{padding:16px 18px}
-    .top .nav{gap:16px}
+    .top .nav{flex-direction:column;gap:6px;align-items:flex-end}  /* 1.5 stack FAQ + Support */
     .footer{padding:26px 18px 30px}
     .pills{gap:10px}
     .pill{min-width:0;width:100%;max-width:320px}
-    .panel .pin{padding:54px 18px 80px}
+    .panel .pin{padding:76px 18px 80px}  /* 1.1 more breathing room at the top of a screen */
     .cards{grid-template-columns:1fr}
   }
 </style>
@@ -247,7 +260,7 @@
 </script>
 
 <div class="top">
-  <span class="brand" onclick="goHome()" title="back to the start">&larr; THE DADOSPHERE <span style="color:var(--g)">_</span> beta</span>
+  <span class="brand" onclick="goHome()" title="back to the start">Dadosphere<span style="color:var(--g)">_</span>Beta</span>
   <span class="nav"><span onclick="openPanel('faq')">What the FAQ</span><span onclick="openPanel('support')">Support</span></span>
 </div>
 
@@ -257,22 +270,27 @@
 
     <!-- THE ASK — the hero -->
     <div class="askwrap">
-      <div class="askline">
+      <div class="askline" onclick="focusAsk()">
         <span class="p">&gt;</span>
         <input id="ask" autocomplete="off" spellcheck="false" aria-label="ask the dadosphere">
-        <span class="ghost" id="ghost">ask the dadosphere</span>
+        <span id="askmirror" aria-hidden="true"></span>
         <span class="cursor" id="cur"></span>
-        <span class="asksend" id="asksend" onclick="submitAsk()" title="ask the dadosphere" role="button" aria-label="ask">&rarr;</span>
+        <span class="ghost" id="ghost">ask the dadosphere</span>
       </div>
-      <!-- framer nudge (progressive disclosure) -->
-      <div class="framenudge" id="framenudge" onclick="openFramer()">Stuck is ok — take it a line at a time &rarr;</div>
-      <!-- the framer -->
+      <!-- framer nudge (progressive disclosure) — literal, no jargon -->
+      <div class="framenudge" id="framenudge" onclick="openFramer()">Want some structure to ask the best question? &rarr;</div>
+      <!-- the framer — literal, first-person scaffolding -->
       <div id="framer">
-        <input id="f1" placeholder="set the scene — &#8220;dad of two&#8221;, &#8220;just divorced&#8221;, &#8220;hate my job&#8221;">
-        <input id="f2" placeholder="what&#8217;s the challenge? — &#8220;I&#8217;m feeling low&#8221;, &#8220;I&#8217;m in debt&#8221;, &#8220;I&#8217;m in love&#8221;">
-        <input id="f3" placeholder="what would help to hear? — &#8220;journeys out of debt&#8221;, &#8220;becoming your best self&#8221;">
-        <div class="go" onclick="askFramed()">[ask]</div>
+        <div class="fhead">Take it a line at a time.</div>
+        <label class="flab" for="f1">I am&#8230;</label>
+        <input id="f1" placeholder="e.g. a dad of two. just divorced. hate my job.">
+        <label class="flab" for="f2">What&#8217;s the challenge I&#8217;m feeling?</label>
+        <input id="f2" placeholder="e.g. I&#8217;m in debt. I&#8217;m in love.">
+        <label class="flab" for="f3">What would help?</label>
+        <input id="f3" placeholder="e.g. to hear how someone got out of debt. how they became their best self.">
       </div>
+      <!-- one Ask button at the bottom — shows whenever there's a question (typed or framed) -->
+      <button id="askbtn" type="button" onclick="askButtonClick()">Ask</button>
     </div>
 
     <!-- demoted stat + citation — quiet, below the ask -->
@@ -305,7 +323,7 @@
   <div class="back" onclick="goHome()">&larr; back</div>
   <div class="pin">
     <div class="tabs">
-      <div class="tab on" id="tab-exp" onclick="switchTab('exp')">Experience</div>
+      <div class="tab on" id="tab-exp" onclick="switchTab('exp')">Experience shares</div>
       <div class="tab" id="tab-dir" onclick="switchTab('dir')">Directory</div>
     </div>
 
@@ -320,7 +338,7 @@
       <div class="chips" id="chips"></div>
       <div class="cards" id="cards"></div>
       <div class="more" id="more" style="display:none">
-        <span class="m1" onclick="loadDir()">[more]</span><span class="m2" onclick="giveStrength()">get more strength (give strength) &rarr;</span>
+        <span class="m1 ulink" onclick="loadDir()">[more]</span><span class="m2" onclick="giveStrength()">get more strength (give strength) &rarr;</span>
       </div>
     </div>
 
@@ -334,7 +352,7 @@
       <input id="rsearch" placeholder="search the directory" autocomplete="off" aria-label="search the directory">
       <div class="chips" id="rchips"></div>
       <div class="cards" id="rcards"></div>
-      <div class="more" id="rmore" style="display:none"><span class="m1" onclick="loadResources()">[more]</span></div>
+      <div class="more" id="rmore" style="display:none"><span class="m1 ulink" onclick="loadResources()">[more]</span></div>
     </div>
   </div>
 </div>
@@ -446,9 +464,26 @@ function openFramer(){
   const f=document.getElementById('framer');
   if(f.classList.contains('on'))return;
   f.classList.add('on');
+  hideStat();
   plsbl('framer_opened');
   try{document.getElementById('f1').focus();}catch(e){}
 }
+/* 2.4 — the opening stat is a hook; once you're in the flow it disappears */
+function hideStat(){var c=document.querySelector('.context'),ci=document.querySelector('.cite');if(c)c.style.display='none';if(ci)ci.style.display='none';}
+function showStat(){var c=document.querySelector('.context'),ci=document.querySelector('.cite');if(c)c.style.display='';if(ci)ci.style.display='';}
+/* 2.1 — the ask line auto-sizes to its content so the pink cursor tracks the end of the typed text */
+function focusAsk(){try{askEl.focus();}catch(e){}}
+function sizeAsk(){
+  var mir=document.getElementById('askmirror');if(!mir)return;
+  mir.textContent=askEl.value;
+  var line=document.querySelector('.askline');
+  var max=Math.max(40,(line?line.clientWidth:320)-50);
+  askEl.style.width=Math.max(10,Math.min(mir.offsetWidth+2,max))+'px';
+}
+/* 2.2 — one Ask button, shown whenever there's a question (typed directly or built in the framer) */
+function framerHasContent(){return ['f1','f2','f3'].some(function(id){var el=document.getElementById(id);return el&&el.value.trim();});}
+function toggleAskBtn(){var b=document.getElementById('askbtn');if(b)b.classList.toggle('show',(askEl.value.trim().length>=2)||framerHasContent());}
+function askButtonClick(){if(document.getElementById('framer').classList.contains('on')&&framerHasContent()){askFramed();}else{submitAsk();}}
 ['f1','f2','f3'].forEach(id=>{
   document.addEventListener('DOMContentLoaded',()=>{});
 });
@@ -458,6 +493,8 @@ function askFramed(){
   const q=[help,challenge,scene].filter(Boolean).join(' — ');
   if(!q)return;
   document.getElementById('framer').classList.remove('on');
+  var b=document.getElementById('askbtn');if(b)b.classList.remove('show');
+  hideStat();
   plsbl('framer_used');
   ask(q);
   try{window.scrollTo(0,document.getElementById('res').offsetTop-80);}catch(e){}
@@ -477,9 +514,11 @@ askEl.addEventListener('keydown',e=>{
 /* shared submit — used by Enter and by the visible arrow */
 function submitAsk(){
   const q=askEl.value.trim();
-  if(q.length<2){try{askEl.focus();}catch(e){}return;}
+  if(q.length<2){focusAsk();return;}
   askEl.value='';
-  document.getElementById('asksend').classList.remove('live');
+  sizeAsk();
+  toggleAskBtn();
+  hideStat();
   ask(q);
 }
 ['f1','f2','f3'].forEach(id=>{
@@ -490,9 +529,10 @@ function submitAsk(){
 /* hesitation/deletion detection on the main ask line */
 askEl.addEventListener('input',()=>{
   const len=askEl.value.length;
-  document.getElementById('cur').style.display=len?'none':'inline-block';
-  document.getElementById('asksend').classList.toggle('live',len>=2);
+  sizeAsk();
+  document.getElementById('cur').style.display='inline-block';
   ghostOn(!len);
+  toggleAskBtn();
   if(len>maxTyped)maxTyped=len;
   /* typed-then-deleted: wrote 8+, scrapped most of it back out */
   if(!framerShown && maxTyped>=8 && len<=2){showFramer('deleted');}
@@ -500,8 +540,11 @@ askEl.addEventListener('input',()=>{
   if(!framerShown && len===0){framerIdle=setTimeout(()=>showFramer('idle'),5000);}
 });
 askEl.addEventListener('focus',()=>{
+  document.getElementById('cur').style.display='inline-block';
   if(!framerShown && !askEl.value){clearTimeout(framerIdle);framerIdle=setTimeout(()=>showFramer('idle'),5000);}
 });
+askEl.addEventListener('blur',()=>{ if(!askEl.value.trim()) document.getElementById('cur').style.display='none'; });
+['f1','f2','f3'].forEach(id=>{const el=document.getElementById(id);if(el)el.addEventListener('input',toggleAskBtn);});
 
 async function searchOracle(q,exclude){
   try{
@@ -565,21 +608,30 @@ function render(data){
   }
   const ans=data.answer, theme=data.theme||{}, resources=data.resources||[];
   if(ans.id!=null)seen.push(ans.id);
+  /* 3.1 — matched-themes tag at the TOP: man · age band · the matched semantic themes */
+  const tag=document.createElement('div');tag.className='mtag';
+  const lab=document.createElement('div');lab.className='mtlab';lab.textContent='matched themes';tag.appendChild(lab);
+  const val=document.createElement('div');val.className='mtval';
+  var demo=(ans.demographic||'').replace(/,\s*/g,' · ').replace(/-/g,'–');
+  var bits=[];if(demo)bits.push(demo);if(theme.name)bits.push(theme.name.toLowerCase());
+  val.textContent=bits.join('  ·  ');tag.appendChild(val);
+  res.appendChild(tag);
+  /* the experience share itself */
   const a=document.createElement('div');a.className='a';res.appendChild(a);
   typeInto(a,'“'+ans.text+'”',()=>{
     plsbl('answer_served',{props:{answer_theme:(theme.name||'unknown')}});
-    if(ans.demographic){const d=document.createElement('div');d.className='demo';d.textContent=ans.demographic;res.appendChild(d);}
-    if(theme.name){const th=document.createElement('div');th.className='theme';th.textContent=theme.name.toLowerCase();res.appendChild(th);}
-    const rf=document.createElement('div');rf.className='reflect';
-    if(!reflectFullShown){reflectFullShown=true;
-      rf.innerHTML='The Dadosphere doesn&#8217;t answer you &mdash; men do. What comes back is another man&#8217;s experience, matched to the themes in your question &mdash; <b>not advice, an answer, or an opinion.</b> Less artificial intelligence, more the honesty of the pub, the touchline, the towpath. Take it with you.';
-    } else {
-      rf.innerHTML='An experience, not an answer. <b>Take it into your thinking.</b>';
-    }
-    res.appendChild(rf);
+    /* 3 — feedback row, BEFORE the resources: Yes / Ask a different question */
+    const ag=document.createElement('div');ag.className='again';
+    ag.innerHTML='<span class="yes" data-a="more">Yes</span> &nbsp;&middot;&nbsp; <span class="yes" data-a="new">Ask a different question</span>';
+    ag.querySelector('[data-a="more"]').onclick=another;
+    ag.querySelector('[data-a="new"]').onclick=()=>{goHome();focusAsk();};
+    res.appendChild(ag);
+    /* 4 — the bridge line into sharing (collapsible contribute) */
+    renderContribute(theme.id);
+    /* 5 — Three things to stay with you */
     if(resources.length){
       const rl=document.createElement('div');rl.className='reslist';
-      const rh=document.createElement('div');rh.className='rh';rh.textContent='three things to take with you';rl.appendChild(rh);
+      const rh=document.createElement('div');rh.className='rh';rh.textContent='Three things to stay with you';rl.appendChild(rh);
       resources.forEach(r=>{
         const it=document.createElement('div');it.className='resitem';
         if(r.slot){const k=document.createElement('span');k.className='rk';k.textContent=r.slot;it.appendChild(k);}
@@ -592,15 +644,9 @@ function render(data){
       res.appendChild(rl);
     }
     const dir=document.createElement('div');dir.className='dir';
-    dir.innerHTML='<span>browse all the answers &amp; the directory</span>';
-    dir.firstChild.onclick=openGetStrength;
+    dir.innerHTML='<span class="ulink">browse all the experience shares &amp; the directory</span>';
+    dir.firstChild.onclick=()=>openGetStrength();
     res.appendChild(dir);
-    const ag=document.createElement('div');ag.className='again';
-    ag.innerHTML='keep going &mdash; <span class="yes" data-a="more">see another response</span> to your question, or <span class="yes" data-a="new">ask something else</span>.';
-    ag.querySelector('[data-a="more"]').onclick=another;
-    ag.querySelector('[data-a="new"]').onclick=()=>{goHome();try{askEl.focus();}catch(e){}};
-    res.appendChild(ag);
-    renderContribute(theme.id);
   });
 }
 
@@ -621,8 +667,8 @@ function renderContribute(themeId){
   const map=THEME_Q[themeId]||DEFAULT_Q;
   const wrap=document.createElement('div');wrap.className='contrib';
   wrap.innerHTML=
-    '<div class="invite">The best way to understand something is to teach it. '+
-    '<span class="open">Add your voice.</span></div>'+
+    '<div class="invite">The best way to get strength is to give strength &mdash; '+
+    '<span class="open ulink">share your experience.</span></div>'+
     '<div class="form">'+
       '<div class="cq">&gt; '+map[1]+'</div>'+
       '<input class="hpf" tabindex="-1" autocomplete="off" aria-hidden="true">'+
@@ -781,11 +827,13 @@ async function loadResources(){
 /* ===================== PANELS ===================== */
 function openPanel(k){closePanels();const p=document.getElementById('p-'+k);if(p)p.style.display='block';}
 function closePanels(){document.querySelectorAll('.panel').forEach(p=>p.style.display='none');}
-function goHome(){closePanels();if(res)res.innerHTML='';if(askEl)askEl.value='';maxTyped=0;ghostOn(true);try{window.scrollTo(0,0);}catch(e){}}
+function goHome(){closePanels();if(res)res.innerHTML='';if(askEl)askEl.value='';maxTyped=0;ghostOn(true);sizeAsk();var b=document.getElementById('askbtn');if(b)b.classList.remove('show');showStat();try{window.scrollTo(0,0);}catch(e){}}
 document.addEventListener('keydown',e=>{if(e.key==='Escape')closePanels();});
 
 /* boot */
 startRoll();
+sizeAsk();
+window.addEventListener('resize',sizeAsk);
 </script>
 </body>
 </html>

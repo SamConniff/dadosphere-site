@@ -6,9 +6,9 @@
 <title>THE DADOSPHERE</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23000'/%3E%3Ctext x='16' y='24' font-family='monospace' font-size='25' font-weight='800' fill='%23fff' text-anchor='middle'%3ED%3C/text%3E%3C/svg%3E">
 <meta name="robots" content="noindex, nofollow">
-<meta name="description" content="A social experiment in collective intelligence and lived experience — for the questions men and boys often carry alone.">
+<meta name="description" content="A social experiment in collective intelligence and lived experience — for the questions men and boys often carry alone. Answer the founding five questions.">
 <meta property="og:title" content="THE DADOSPHERE">
-<meta property="og:description" content="80% of men said they had a tough question and nowhere to ask it. What's yours?">
+<meta property="og:description" content="80% of men said they had a tough question and nowhere to ask it. Answer the founding five.">
 <meta property="og:url" content="https://thedadosphere.com">
 <meta property="og:type" content="website">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -26,71 +26,58 @@
   :root{--g:#FF2D87;--mono:'IBM Plex Mono',monospace;--monb:'JetBrains Mono',monospace;
         --ink0:#fff;--ink1:#999;--ink2:#888;--ink3:#555;--ink4:#2a2a2a}
   *{margin:0;padding:0;box-sizing:border-box}
-  html,body{background:#000;height:100%}
-  body{color:#fff;font-family:var(--mono);line-height:1.6;min-height:100vh;
-       display:flex;align-items:center;justify-content:center}
+  html,body{background:#000}
+  body{color:#fff;font-family:var(--mono);line-height:1.6;min-height:100vh}
   ::selection{background:var(--g);color:#000}
+  a{color:var(--ink2)}
   @keyframes blink{50%{opacity:0}}
-
-  /* ---- password gate (pre-launch) ---- */
-  #gate{position:fixed;inset:0;background:#000;z-index:200;display:flex;align-items:center;justify-content:center;padding:40px 26px}
-  #gate.hidden{display:none}
-  #gate .gatebox{width:min(420px,100%);text-align:left}
-  #gate .gt{font-family:var(--monb);font-weight:800;font-size:clamp(17px,3vw,23px);letter-spacing:.04em;margin-bottom:24px}
-  #gate .gt span{color:var(--g)}
-  #gate .gp{display:flex;align-items:baseline;gap:10px;font-size:18px;border-bottom:1px solid var(--ink4);padding-bottom:8px}
-  #gate .gpr{color:var(--ink2)}
-  #gate #gpw{background:transparent;border:none;outline:none;color:#fff;font-family:var(--mono);font-size:18px;flex:1;min-width:0;letter-spacing:.25em}
-  #gate #gpw::placeholder{color:var(--ink3);letter-spacing:normal}
-  #gate .gcur{display:inline-block;width:.5em;height:2px;background:var(--g);animation:blink 1.05s steps(1) infinite}
-  #gate .gmsg{color:var(--ink2);font-size:12.5px;margin-top:16px;min-height:16px;letter-spacing:.02em}
-
-  .welcome{text-align:left;padding:40px 26px;width:min(820px,100%)}
-
-  .w-line1{
-    font-family:var(--monb);font-weight:800;
-    font-size:clamp(22px,4vw,38px);line-height:1.3;
-    opacity:0;
-    animation:fadeup 1.7s cubic-bezier(.2,.6,.2,1) forwards;
-    animation-delay:.35s;
-  }
-
-  .w-line2{
-    color:var(--ink1);
-    font-size:clamp(14px,2vw,18px);line-height:1.6;
-    margin-top:18px;
-    opacity:0;
-    animation:fadeup 1.5s cubic-bezier(.2,.6,.2,1) forwards;
-    animation-delay:1.3s;
-  }
-
-  .w-btn{
-    display:inline-block;
-    margin-top:36px;
-    font-family:var(--monb);font-weight:700;
-    font-size:clamp(15px,2vw,19px);
-    color:#fff;
-    text-decoration:none;
-    border-bottom:2px solid var(--g);
-    padding-bottom:3px;
-    cursor:pointer;
-    opacity:0;
-    animation:fadein 1s ease forwards;
-    animation-delay:2.4s;
-    user-select:none;
-  }
-  .w-btn:hover{color:var(--g)}
-
   @keyframes fadein{to{opacity:1}}
   @keyframes fadeup{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+
+  .wrap{max-width:760px;margin:0 auto;padding:64px 26px 80px}
+
+  .w-line1{font-family:var(--monb);font-weight:800;font-size:clamp(24px,4.5vw,40px);line-height:1.25;
+           opacity:0;animation:fadeup 1.7s cubic-bezier(.2,.6,.2,1) forwards;animation-delay:.35s}
+  .w-line2{color:var(--ink1);font-size:clamp(14px,2vw,18px);line-height:1.6;margin-top:18px;
+           opacity:0;animation:fadeup 1.5s cubic-bezier(.2,.6,.2,1) forwards;animation-delay:1.2s}
+
+  /* the founding five questions — public, the thing the newsletters invite people to do */
+  .ask-block{margin-top:50px;opacity:0;animation:fadein 1s ease forwards;animation-delay:2s}
+  .ab-head{font-family:var(--monb);font-weight:700;font-size:clamp(16px,2.4vw,21px);line-height:1.4}
+  .ab-sub{color:var(--ink1);font-size:14px;line-height:1.65;margin-top:11px;max-width:620px}
+  .tf-frame{width:100%;height:min(74vh,680px);border:1px solid var(--ink4);background:#000;margin-top:22px;display:block;border-radius:2px}
+
+  /* enter the experience — the password still protects the app + the men's answers */
+  .enter{margin-top:52px;border-top:1px solid var(--ink4);padding-top:28px;opacity:0;animation:fadein 1s ease forwards;animation-delay:2.4s}
+  .enter .el{color:var(--ink1);font-size:13.5px;margin-bottom:14px}
+  .gp{display:flex;align-items:baseline;gap:10px;font-size:17px;border-bottom:1px solid var(--ink4);padding-bottom:8px;max-width:360px}
+  .gpr{color:var(--g)}
+  #gpw{background:transparent;border:none;outline:none;color:#fff;font-family:var(--mono);font-size:17px;flex:1;min-width:0;letter-spacing:.2em}
+  #gpw::placeholder{color:var(--ink3);letter-spacing:normal}
+  .gcur{display:inline-block;width:.5em;height:2px;background:var(--g);animation:blink 1.05s steps(1) infinite}
+  .gmsg{color:var(--ink2);font-size:12.5px;margin-top:14px;min-height:16px}
+
+  .foot{color:var(--ink3);font-size:11.5px;margin-top:48px;line-height:1.9}
+
+  @media (max-width:600px){
+    .wrap{padding:48px 18px 70px}
+    .tf-frame{height:min(78vh,640px)}
+  }
 </style>
 </head>
 <body>
+<div class="wrap">
+  <div class="w-line1">Watch out, lads, here come the Dads.</div>
+  <div class="w-line2">A social experiment in collective intelligence and lived experience —<br>for the questions men and boys often carry alone.</div>
 
-<!-- PASSWORD GATE — pre-launch. Password not in source, only its SHA-256 hash. -->
-<div id="gate">
-  <div class="gatebox">
-    <div class="gt">THE DADOSPHERE <span>_</span></div>
+  <div class="ask-block">
+    <div class="ab-head">We're not open to everyone yet — but the founding questions are.</div>
+    <div class="ab-sub">Five questions. Anonymous — no name shown, no email shown. Your answers are the experiment: they help build what this becomes. Add yours.</div>
+    <iframe class="tf-frame" src="https://sam774431.typeform.com/to/GYKhzxwT" title="The Dadosphere — Founding Dads, Five Questions" allow="camera; microphone; autoplay; encrypted-media;"></iframe>
+  </div>
+
+  <div class="enter">
+    <div class="el">Got the password? Step inside the Dadosphere.</div>
     <div class="gp">
       <span class="gpr">&gt;</span>
       <input id="gpw" type="password" autocomplete="off" spellcheck="false" placeholder="password" aria-label="password">
@@ -98,56 +85,30 @@
     </div>
     <div class="gmsg" id="gmsg"></div>
   </div>
-</div>
 
-<div class="welcome">
-  <div class="w-line1">Watch out, lads, here come the Dads.</div>
-  <div class="w-line2">A social experiment in collective intelligence and lived experience<br>for the questions men and boys often carry alone.</div>
-  <div class="w-btn" id="enter">Enter the Dadosphere →</div>
+  <div class="foot">The Dadosphere is 100% anonymous. Cookies are for monsters.<br>beta · launching Father's Day 2026</div>
 </div>
 
 <script>
-/* ---- password gate: must pass before the welcome page (and the site) ---- */
+/* The landing page is PUBLIC so newsletter visitors can answer the founding five.
+   The password only unlocks the app (oracle.html) + the men's answers, which stay gated. */
 (function(){
   var PW_HASH='1225e2cc36de14f05c707de77e8dc48d9db7e8d3b0a5ce574d6c886abe4bcf09';
-  var gate=document.getElementById('gate');
   var pw=document.getElementById('gpw'), msg=document.getElementById('gmsg');
-
-  function proceed(){
-    /* returning visitors (within 30 days) skip the welcome and go straight to the site */
-    try{
-      var KEY='dad_visited', TTL=30*24*60*60*1000;
-      var stored=localStorage.getItem(KEY);
-      if(stored&&(Date.now()-parseInt(stored,10))<TTL){ window.location.replace('oracle.html'); return; }
-    }catch(e){}
-    /* otherwise the welcome page is now visible behind the (removed) gate */
-  }
-  function openGate(){ gate.classList.add('hidden'); proceed(); }
-
-  try{ if(sessionStorage.getItem('ds_gate')==='1'){ openGate(); return; } }catch(e){}
-  setTimeout(function(){try{pw.focus();}catch(e){}},60);
-
   async function check(){
     var v=pw.value; if(!v)return;
     try{
       var buf=await crypto.subtle.digest('SHA-256', new TextEncoder().encode(v));
       var hex=Array.from(new Uint8Array(buf)).map(function(b){return b.toString(16).padStart(2,'0');}).join('');
-      if(hex===PW_HASH){ try{sessionStorage.setItem('ds_gate','1');}catch(e){} openGate(); }
-      else{ msg.textContent='nope.'; pw.value=''; pw.focus(); }
+      if(hex===PW_HASH){
+        try{sessionStorage.setItem('ds_gate','1');}catch(e){}
+        try{localStorage.setItem('dad_visited',String(Date.now()));}catch(e){}
+        try{window.plausible&&window.plausible('welcome_enter_clicked');}catch(e){}
+        window.location.href='oracle.html';
+      } else { msg.textContent='nope.'; pw.value=''; pw.focus(); }
     }catch(e){ msg.textContent='this needs a modern browser.'; }
   }
   pw.addEventListener('keydown', function(e){ if(e.key==='Enter') check(); });
-})();
-
-/* ---- enter button: stamp the visit and go to the site ---- */
-(function(){
-  var btn=document.getElementById('enter');
-  if(!btn)return;
-  btn.addEventListener('click',function(){
-    try{localStorage.setItem('dad_visited',String(Date.now()));}catch(e){}
-    try{window.plausible&&window.plausible('welcome_enter_clicked');}catch(e){}
-    window.location.href='oracle.html';
-  });
 })();
 </script>
 </body>
