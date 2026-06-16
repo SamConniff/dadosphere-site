@@ -168,11 +168,55 @@
   .more span{cursor:pointer}
   .more .m1:hover,.more .m2:hover{color:#fff}
   .more .m2{color:#fff;text-decoration:underline;text-decoration-color:var(--g);text-decoration-thickness:2px;text-underline-offset:4px}
+
+  /* ---- password gate (pre-launch) ---- */
+  #gate{position:fixed;inset:0;background:#000;z-index:200;display:flex;align-items:center;justify-content:center;padding:40px 26px}
+  #gate.hidden{display:none}
+  #gate .gatebox{width:min(420px,100%);text-align:left}
+  #gate .gt{font-family:var(--monb);font-weight:800;font-size:clamp(17px,3vw,23px);letter-spacing:.04em;margin-bottom:24px}
+  #gate .gt span{color:var(--g)}
+  #gate .gp{display:flex;align-items:baseline;gap:10px;font-size:18px;border-bottom:1px solid var(--ink4);padding-bottom:8px}
+  #gate .gpr{color:var(--ink2)}
+  #gate #gpw{background:transparent;border:none;outline:none;color:#fff;font-family:var(--mono);font-size:18px;flex:1;min-width:0;letter-spacing:.25em}
+  #gate #gpw::placeholder{color:var(--ink3);letter-spacing:normal}
+  #gate .gcur{display:inline-block;width:.5em;height:2px;background:var(--g);animation:blink 1.05s steps(1) infinite}
+  #gate .gmsg{color:var(--ink2);font-size:12.5px;margin-top:16px;min-height:16px;letter-spacing:.02em}
 </style>
 </head>
 <body>
 
-<!-- GATE: removed 15 Jun for user testing (see live oracle.html). Preview file — restore gate + noindex per README before launch. -->
+<!-- PASSWORD GATE — pre-launch. Password not in source, only its SHA-256 hash. Direct hits to oracle.html are gated too. -->
+<div id="gate">
+  <div class="gatebox">
+    <div class="gt">THE DADOSPHERE <span>_</span></div>
+    <div class="gp">
+      <span class="gpr">&gt;</span>
+      <input id="gpw" type="password" autocomplete="off" spellcheck="false" placeholder="password" aria-label="password">
+      <span class="gcur"></span>
+    </div>
+    <div class="gmsg" id="gmsg"></div>
+  </div>
+</div>
+<script>
+/* ---- password gate: shared with the welcome page via sessionStorage (entered once per session) ---- */
+(function(){
+  var PW_HASH='1225e2cc36de14f05c707de77e8dc48d9db7e8d3b0a5ce574d6c886abe4bcf09';
+  var gate=document.getElementById('gate');
+  var pw=document.getElementById('gpw'), msg=document.getElementById('gmsg');
+  try{ if(sessionStorage.getItem('ds_gate')==='1'){ gate.classList.add('hidden'); return; } }catch(e){}
+  setTimeout(function(){try{pw.focus();}catch(e){}},60);
+  async function check(){
+    var v=pw.value; if(!v)return;
+    try{
+      var buf=await crypto.subtle.digest('SHA-256', new TextEncoder().encode(v));
+      var hex=Array.from(new Uint8Array(buf)).map(function(b){return b.toString(16).padStart(2,'0');}).join('');
+      if(hex===PW_HASH){ try{sessionStorage.setItem('ds_gate','1');}catch(e){} gate.classList.add('hidden'); }
+      else{ msg.textContent='nope.'; pw.value=''; pw.focus(); }
+    }catch(e){ msg.textContent='this needs a modern browser.'; }
+  }
+  pw.addEventListener('keydown', function(e){ if(e.key==='Enter') check(); });
+})();
+</script>
 
 <div class="top">
   <span class="brand" onclick="goHome()" title="back to the start">&larr; THE DADOSPHERE <span style="color:var(--g)">_</span> beta</span>

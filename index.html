@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>THE DADOSPHERE</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23000'/%3E%3Ctext x='16' y='24' font-family='monospace' font-size='25' font-weight='800' fill='%23fff' text-anchor='middle'%3ED%3C/text%3E%3C/svg%3E">
-<meta name="robots" content="index, follow"><!-- TEMP 15 Jun 2026 for SEMrush audit — RESTORE to "noindex, nofollow" tonight together with the gate -->
+<meta name="robots" content="noindex, nofollow">
 <meta name="description" content="A social experiment in collective intelligence and lived experience — for the questions men and boys often carry alone.">
 <meta property="og:title" content="THE DADOSPHERE">
 <meta property="og:description" content="80% of men said they had a tough question and nowhere to ask it. What's yours?">
@@ -87,7 +87,18 @@
 </head>
 <body>
 
-<!-- GATE TEMPORARILY REMOVED 15 Jun 2026 for user testing (SEMrush/Lyssna). Restore tonight: re-add the gate <div> + gate <script> from README-DEPLOY.md. Password unchanged: Dadosphere26. -->
+<!-- PASSWORD GATE — pre-launch. Password not in source, only its SHA-256 hash. -->
+<div id="gate">
+  <div class="gatebox">
+    <div class="gt">THE DADOSPHERE <span>_</span></div>
+    <div class="gp">
+      <span class="gpr">&gt;</span>
+      <input id="gpw" type="password" autocomplete="off" spellcheck="false" placeholder="password" aria-label="password">
+      <span class="gcur"></span>
+    </div>
+    <div class="gmsg" id="gmsg"></div>
+  </div>
+</div>
 
 <div class="welcome">
   <div class="w-line1">Watch out, lads, here come the Dads.</div>
@@ -96,14 +107,36 @@
 </div>
 
 <script>
-/* ---- gate temporarily removed 15 Jun 2026 for user testing; returning-visitor redirect retained below ---- */
+/* ---- password gate: must pass before the welcome page (and the site) ---- */
 (function(){
-  /* returning visitors (within 30 days) skip the welcome and go straight to the site */
-  try{
-    var KEY='dad_visited', TTL=30*24*60*60*1000;
-    var stored=localStorage.getItem(KEY);
-    if(stored&&(Date.now()-parseInt(stored,10))<TTL){ window.location.replace('oracle.html'); }
-  }catch(e){}
+  var PW_HASH='1225e2cc36de14f05c707de77e8dc48d9db7e8d3b0a5ce574d6c886abe4bcf09';
+  var gate=document.getElementById('gate');
+  var pw=document.getElementById('gpw'), msg=document.getElementById('gmsg');
+
+  function proceed(){
+    /* returning visitors (within 30 days) skip the welcome and go straight to the site */
+    try{
+      var KEY='dad_visited', TTL=30*24*60*60*1000;
+      var stored=localStorage.getItem(KEY);
+      if(stored&&(Date.now()-parseInt(stored,10))<TTL){ window.location.replace('oracle.html'); return; }
+    }catch(e){}
+    /* otherwise the welcome page is now visible behind the (removed) gate */
+  }
+  function openGate(){ gate.classList.add('hidden'); proceed(); }
+
+  try{ if(sessionStorage.getItem('ds_gate')==='1'){ openGate(); return; } }catch(e){}
+  setTimeout(function(){try{pw.focus();}catch(e){}},60);
+
+  async function check(){
+    var v=pw.value; if(!v)return;
+    try{
+      var buf=await crypto.subtle.digest('SHA-256', new TextEncoder().encode(v));
+      var hex=Array.from(new Uint8Array(buf)).map(function(b){return b.toString(16).padStart(2,'0');}).join('');
+      if(hex===PW_HASH){ try{sessionStorage.setItem('ds_gate','1');}catch(e){} openGate(); }
+      else{ msg.textContent='nope.'; pw.value=''; pw.focus(); }
+    }catch(e){ msg.textContent='this needs a modern browser.'; }
+  }
+  pw.addEventListener('keydown', function(e){ if(e.key==='Enter') check(); });
 })();
 
 /* ---- enter button: stamp the visit and go to the site ---- */
