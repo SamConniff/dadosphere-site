@@ -142,6 +142,8 @@
   .pill .ps{font-size:11.5px;color:var(--ink2)}
   .anon{font-size:12px;color:var(--ink2);line-height:1.9}
   .anon .mono{color:var(--ink3);font-size:11px}
+  /* always-present crisis line (Safeguarding Policy §7) */
+  .crisisline{font-size:11px;color:var(--ink3);line-height:1.75;margin:16px auto 0;max-width:620px}
 
   /* panels */
   .panel{display:none;position:fixed;inset:0;background:#000;z-index:50;overflow-y:auto}
@@ -260,7 +262,7 @@
 </script>
 
 <div class="top">
-  <span class="brand" onclick="goHome()" title="back to the start">Dadosphere<span style="color:var(--g)">_</span>Beta</span>
+  <span class="brand" onclick="goHome()" title="back to the start">Dadosphere<span style="color:var(--ink3)"> beta</span></span>
   <span class="nav"><span onclick="openPanel('faq')">What the FAQ</span><span onclick="openPanel('support')">Support</span></span>
 </div>
 
@@ -315,6 +317,7 @@
     The Dadosphere is 100% anonymous.<br>
     <span class="mono">Cookies are for monsters.</span>
   </div>
+  <div class="crisisline">The Dadosphere is not a crisis service. If you're struggling right now: Samaritans 116 123 &middot; text SHOUT to 85258 &middot; CALM 0800 58 58 58.</div>
 </div>
 </div><!-- /oracle -->
 
@@ -324,7 +327,7 @@
   <div class="pin">
     <div class="tabs">
       <div class="tab on" id="tab-exp" onclick="switchTab('exp')">Experience shares</div>
-      <div class="tab" id="tab-dir" onclick="switchTab('dir')">Directory</div>
+      <div class="tab" id="tab-dir" onclick="switchTab('dir')">Black Book</div>
     </div>
 
     <!-- EXPERIENCE: the searchable gallery of verbatim answers -->
@@ -345,11 +348,11 @@
     <!-- DIRECTORY: browsable projects, programmes, advisory services, centres -->
     <div id="view-dir" style="display:none">
       <div class="tabhead">
-        <h2>the directory</h2>
+        <h2>the black book</h2>
         <span class="addv" onclick="nominate()">know one we&#8217;re missing? &rarr;</span>
       </div>
       <div class="count" id="res-count" style="color:var(--ink2);font-size:12.5px;margin-top:2px">projects, programmes, advisory services and centres — always available.</div>
-      <input id="rsearch" placeholder="search the directory" autocomplete="off" aria-label="search the directory">
+      <input id="rsearch" placeholder="search the black book" autocomplete="off" aria-label="search the black book">
       <div class="chips" id="rchips"></div>
       <div class="cards" id="rcards"></div>
       <div class="more" id="rmore" style="display:none"><span class="m1 ulink" onclick="loadResources()">[more]</span></div>
@@ -406,7 +409,7 @@
       <b><a href="https://giveusashout.org" target="_blank" rel="noopener">Shout</a></b> — free 24/7 text support: text SHOUT to 85258<br>
       <b><a href="https://hubofhope.co.uk" target="_blank" rel="noopener">Hub of Hope</a></b> — type your postcode, find support near you — the UK's biggest directory
     </div>
-    <p style="margin-top:26px"><span class="give" onclick="openGetStrength('dir')">Search the full directory of men's provisions &rarr;</span></p>
+    <p style="margin-top:26px"><span class="give" onclick="openGetStrength('dir')">Open the black book of men's provisions &rarr;</span></p>
     <p class="dim" style="margin-top:24px">who could you actually say it to, this week?</p>
   </div>
 </div>
@@ -644,7 +647,7 @@ function render(data){
       res.appendChild(rl);
     }
     const dir=document.createElement('div');dir.className='dir';
-    dir.innerHTML='<span class="ulink">browse all the experience shares &amp; the directory</span>';
+    dir.innerHTML='<span class="ulink">browse all the experience shares &amp; the black book</span>';
     dir.firstChild.onclick=()=>openGetStrength();
     res.appendChild(dir);
   });
