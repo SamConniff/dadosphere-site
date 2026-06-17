@@ -228,38 +228,7 @@
 </head>
 <body>
 
-<!-- PASSWORD GATE — pre-launch. Password not in source, only its SHA-256 hash. Direct hits to oracle.html are gated too. -->
-<div id="gate">
-  <div class="gatebox">
-    <div class="gt">THE DADOSPHERE <span>_</span></div>
-    <div class="gp">
-      <span class="gpr">&gt;</span>
-      <input id="gpw" type="password" autocomplete="off" spellcheck="false" placeholder="password" aria-label="password">
-      <span class="gcur"></span>
-    </div>
-    <div class="gmsg" id="gmsg"></div>
-  </div>
-</div>
-<script>
-/* ---- password gate: shared with the welcome page via sessionStorage (entered once per session) ---- */
-(function(){
-  var PW_HASH='1225e2cc36de14f05c707de77e8dc48d9db7e8d3b0a5ce574d6c886abe4bcf09';
-  var gate=document.getElementById('gate');
-  var pw=document.getElementById('gpw'), msg=document.getElementById('gmsg');
-  try{ if(sessionStorage.getItem('ds_gate')==='1'){ gate.classList.add('hidden'); return; } }catch(e){}
-  setTimeout(function(){try{pw.focus();}catch(e){}},60);
-  async function check(){
-    var v=pw.value; if(!v)return;
-    try{
-      var buf=await crypto.subtle.digest('SHA-256', new TextEncoder().encode(v));
-      var hex=Array.from(new Uint8Array(buf)).map(function(b){return b.toString(16).padStart(2,'0');}).join('');
-      if(hex===PW_HASH){ try{sessionStorage.setItem('ds_gate','1');}catch(e){} gate.classList.add('hidden'); }
-      else{ msg.textContent='nope.'; pw.value=''; pw.focus(); }
-    }catch(e){ msg.textContent='this needs a modern browser.'; }
-  }
-  pw.addEventListener('keydown', function(e){ if(e.key==='Enter') check(); });
-})();
-</script>
+<!-- Password gate REMOVED 17 Jun 2026 (Sam's call — open for the final days before the Father's Day launch). Live and public. -->
 
 <div class="top">
   <span class="brand" onclick="goHome()" title="back to the start">Dadosphere<span style="color:var(--ink3)"> beta</span></span>

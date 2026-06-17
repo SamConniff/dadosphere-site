@@ -50,6 +50,8 @@
   /* enter the experience — the password still protects the app + the men's answers */
   .enter{margin-top:52px;border-top:1px solid var(--ink4);padding-top:28px;opacity:0;animation:fadein 1s ease forwards;animation-delay:2.4s}
   .enter .el{color:var(--ink1);font-size:13.5px;margin-bottom:14px}
+  .enterbtn{display:inline-block;font-family:var(--monb);font-weight:700;font-size:clamp(15px,2vw,19px);color:#fff;text-decoration:none;border-bottom:2px solid var(--g);padding-bottom:3px}
+  .enterbtn:hover{color:var(--g)}
   .gp{display:flex;align-items:baseline;gap:10px;font-size:17px;border-bottom:1px solid var(--ink4);padding-bottom:8px;max-width:360px}
   .gpr{color:var(--g)}
   #gpw{background:transparent;border:none;outline:none;color:#fff;font-family:var(--mono);font-size:17px;flex:1;min-width:0;letter-spacing:.2em}
@@ -77,39 +79,15 @@
   </div>
 
   <div class="enter">
-    <div class="el">Got the password? Step inside the Dadosphere.</div>
-    <div class="gp">
-      <span class="gpr">&gt;</span>
-      <input id="gpw" type="password" autocomplete="off" spellcheck="false" placeholder="password" aria-label="password">
-      <span class="gcur"></span>
-    </div>
-    <div class="gmsg" id="gmsg"></div>
+    <a class="enterbtn" href="oracle.html">Step inside the Dadosphere &rarr;</a>
   </div>
 
   <div class="foot">The Dadosphere is 100% anonymous. Cookies are for monsters.<br>The Dadosphere is not a crisis service. If you're struggling right now: Samaritans 116 123 · text SHOUT to 85258 · CALM 0800 58 58 58.<br>beta · launching Father's Day 2026</div>
 </div>
 
+<!-- Password removed 17 Jun 2026 (Sam's call) — landing is public, "Step inside" links straight to the app. -->
 <script>
-/* The landing page is PUBLIC so newsletter visitors can answer the founding five.
-   The password only unlocks the app (oracle.html) + the men's answers, which stay gated. */
-(function(){
-  var PW_HASH='1225e2cc36de14f05c707de77e8dc48d9db7e8d3b0a5ce574d6c886abe4bcf09';
-  var pw=document.getElementById('gpw'), msg=document.getElementById('gmsg');
-  async function check(){
-    var v=pw.value; if(!v)return;
-    try{
-      var buf=await crypto.subtle.digest('SHA-256', new TextEncoder().encode(v));
-      var hex=Array.from(new Uint8Array(buf)).map(function(b){return b.toString(16).padStart(2,'0');}).join('');
-      if(hex===PW_HASH){
-        try{sessionStorage.setItem('ds_gate','1');}catch(e){}
-        try{localStorage.setItem('dad_visited',String(Date.now()));}catch(e){}
-        try{window.plausible&&window.plausible('welcome_enter_clicked');}catch(e){}
-        window.location.href='oracle.html';
-      } else { msg.textContent='nope.'; pw.value=''; pw.focus(); }
-    }catch(e){ msg.textContent='this needs a modern browser.'; }
-  }
-  pw.addEventListener('keydown', function(e){ if(e.key==='Enter') check(); });
-})();
+  try{var b=document.querySelector('.enterbtn');if(b)b.addEventListener('click',function(){try{window.plausible&&window.plausible('welcome_enter_clicked');}catch(e){}});}catch(e){}
 </script>
 </body>
 </html>
