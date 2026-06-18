@@ -6,9 +6,9 @@
 <title>THE DADOSPHERE</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23000'/%3E%3Ctext x='16' y='24' font-family='monospace' font-size='25' font-weight='800' fill='%23fff' text-anchor='middle'%3ED%3C/text%3E%3C/svg%3E">
 <meta name="robots" content="index, follow">
-<meta name="description" content="A social experiment in collective intelligence and lived experience — for the questions men and boys often carry alone. Answer the founding five questions.">
+<meta name="description" content="A social experiment in collective intelligence and lived experience — for the questions men and boys often carry alone.">
 <meta property="og:title" content="THE DADOSPHERE">
-<meta property="og:description" content="80% of men said they had a tough question and nowhere to ask it. Answer the founding five.">
+<meta property="og:description" content="Watch out, lads, here come the Dads. The questions men carry alone, answered by 500+ men.">
 <meta property="og:url" content="https://thedadosphere.com">
 <meta property="og:type" content="website">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -27,67 +27,43 @@
         --ink0:#fff;--ink1:#999;--ink2:#888;--ink3:#555;--ink4:#2a2a2a}
   *{margin:0;padding:0;box-sizing:border-box}
   html,body{background:#000}
-  body{color:#fff;font-family:var(--mono);line-height:1.6;min-height:100vh}
+  body{color:#fff;font-family:var(--mono);line-height:1.6;min-height:100vh;display:flex;flex-direction:column}
   ::selection{background:var(--g);color:#000}
-  a{color:var(--ink2)}
-  @keyframes blink{50%{opacity:0}}
   @keyframes fadein{to{opacity:1}}
   @keyframes fadeup{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
 
-  .wrap{max-width:760px;margin:0 auto;padding:64px 26px 80px}
+  /* the opener — positioning statement + the way in. That's it. */
+  .welcome{flex:1;display:flex;flex-direction:column;justify-content:center;text-align:left;
+           width:min(820px,100%);margin:0 auto;padding:40px 26px}
+  .w-line1{font-family:var(--monb);font-weight:800;font-size:clamp(24px,4.5vw,42px);line-height:1.25;
+           opacity:0;animation:fadeup 1.9s cubic-bezier(.2,.6,.2,1) forwards;animation-delay:.4s}
+  .w-line2{color:var(--ink1);font-size:clamp(14px,2vw,18px);line-height:1.6;margin-top:20px;max-width:560px;
+           opacity:0;animation:fadeup 1.6s cubic-bezier(.2,.6,.2,1) forwards;animation-delay:1.4s}
+  .w-btn{display:inline-block;width:fit-content;margin-top:40px;font-family:var(--monb);font-weight:700;
+         font-size:clamp(15px,2vw,19px);color:#fff;text-decoration:none;border-bottom:2px solid var(--g);
+         padding-bottom:3px;opacity:0;animation:fadein 1.1s ease forwards;animation-delay:2.5s}
+  .w-btn:hover{color:var(--g)}
 
-  .w-line1{font-family:var(--monb);font-weight:800;font-size:clamp(24px,4.5vw,40px);line-height:1.25;
-           opacity:0;animation:fadeup 1.7s cubic-bezier(.2,.6,.2,1) forwards;animation-delay:.35s}
-  .w-line2{color:var(--ink1);font-size:clamp(14px,2vw,18px);line-height:1.6;margin-top:18px;
-           opacity:0;animation:fadeup 1.5s cubic-bezier(.2,.6,.2,1) forwards;animation-delay:1.2s}
-
-  /* the founding five questions — public, the thing the newsletters invite people to do */
-  .ask-block{margin-top:50px;opacity:0;animation:fadein 1s ease forwards;animation-delay:2s}
-  .ab-head{font-family:var(--monb);font-weight:700;font-size:clamp(16px,2.4vw,21px);line-height:1.4}
-  .ab-sub{color:var(--ink1);font-size:14px;line-height:1.65;margin-top:11px;max-width:620px}
-  .tf-frame{width:100%;height:min(74vh,680px);border:1px solid var(--ink4);background:#000;margin-top:22px;display:block;border-radius:2px}
-
-  /* enter the experience — the password still protects the app + the men's answers */
-  .enter{margin-top:52px;border-top:1px solid var(--ink4);padding-top:28px;opacity:0;animation:fadein 1s ease forwards;animation-delay:2.4s}
-  .enter .el{color:var(--ink1);font-size:13.5px;margin-bottom:14px}
-  .enterbtn{display:inline-block;font-family:var(--monb);font-weight:700;font-size:clamp(15px,2vw,19px);color:#fff;text-decoration:none;border-bottom:2px solid var(--g);padding-bottom:3px}
-  .enterbtn:hover{color:var(--g)}
-  .gp{display:flex;align-items:baseline;gap:10px;font-size:17px;border-bottom:1px solid var(--ink4);padding-bottom:8px;max-width:360px}
-  .gpr{color:var(--g)}
-  #gpw{background:transparent;border:none;outline:none;color:#fff;font-family:var(--mono);font-size:17px;flex:1;min-width:0;letter-spacing:.2em}
-  #gpw::placeholder{color:var(--ink3);letter-spacing:normal}
-  .gcur{display:inline-block;width:.5em;height:2px;background:var(--g);animation:blink 1.05s steps(1) infinite}
-  .gmsg{color:var(--ink2);font-size:12.5px;margin-top:14px;min-height:16px}
-
-  .foot{color:var(--ink3);font-size:11.5px;margin-top:48px;line-height:1.9}
-
-  @media (max-width:600px){
-    .wrap{padding:48px 18px 70px}
-    .tf-frame{height:min(78vh,640px)}
-  }
+  /* footer — anonymity + the always-present crisis line (Safeguarding Policy §7) */
+  .foot{width:min(820px,100%);margin:0 auto;padding:0 26px 34px;color:var(--ink3);font-size:11px;line-height:1.85;
+        opacity:0;animation:fadein 1.1s ease forwards;animation-delay:3s}
+  .foot .mono{color:var(--ink2)}
 </style>
 </head>
 <body>
-<div class="wrap">
-  <div class="w-line1">Watch out, lads, here come the Dads.</div>
-  <div class="w-line2">A social experiment in collective intelligence and lived experience —<br>for the questions men and boys often carry alone.</div>
-
-  <div class="ask-block">
-    <div class="ab-head">We're not open to everyone yet — but the founding questions are.</div>
-    <div class="ab-sub">Five questions. Anonymous — no name shown, no email shown. Your answers are the experiment: they help build what this becomes. Add yours.</div>
-    <iframe class="tf-frame" src="https://sam774431.typeform.com/to/GYKhzxwT" title="The Dadosphere — Founding Dads, Five Questions" allow="camera; microphone; autoplay; encrypted-media;"></iframe>
+  <div class="welcome">
+    <div class="w-line1">Watch out, lads, here come the Dads.</div>
+    <div class="w-line2">A social experiment in collective intelligence and lived experience —<br>for the questions men and boys often carry alone.</div>
+    <a class="w-btn" id="enter" href="oracle.html">Enter the Dadosphere &rarr;</a>
   </div>
 
-  <div class="enter">
-    <a class="enterbtn" href="oracle.html">Step inside the Dadosphere &rarr;</a>
+  <div class="foot">
+    <span class="mono">The Dadosphere is 100% anonymous. Cookies are for monsters.</span><br>
+    beta · launching Father's Day 2026
   </div>
 
-  <div class="foot">The Dadosphere is 100% anonymous. Cookies are for monsters.<br>The Dadosphere is not a crisis service. If you're struggling right now: Samaritans 116 123 · text SHOUT to 85258 · CALM 0800 58 58 58.<br>beta · launching Father's Day 2026</div>
-</div>
-
-<!-- Password removed 17 Jun 2026 (Sam's call) — landing is public, "Step inside" links straight to the app. -->
 <script>
-  try{var b=document.querySelector('.enterbtn');if(b)b.addEventListener('click',function(){try{window.plausible&&window.plausible('welcome_enter_clicked');}catch(e){}});}catch(e){}
+  try{var b=document.getElementById('enter');if(b)b.addEventListener('click',function(){try{window.plausible&&window.plausible('welcome_enter_clicked');}catch(e){}});}catch(e){}
 </script>
 </body>
 </html>
