@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://thedadosphere.com/sitemap.xml
