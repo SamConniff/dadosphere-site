@@ -10,7 +10,7 @@
 <meta name="robots" content="index, follow">
 <meta name="description" content="A social experiment in collective intelligence and lived experience for the questions men and boys often carry alone. Anonymous answers, verbatim, from real men. No chatbot. No advice.">
 <meta property="og:title" content="THE DADOSPHERE">
-<meta property="og:description" content="The questions men carry alone, answered by 500+ men. Anonymous. Verbatim. Ask anything.">
+<meta property="og:description" content="The questions men carry alone, answered by 600+ men. Anonymous. Verbatim. Ask anything.">
 <meta property="og:url" content="https://thedadosphere.com">
 <meta property="og:type" content="website">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -277,7 +277,7 @@
 
     <!-- demoted stat + citation — quiet, below the ask -->
     <div class="context">80% of men said they had a tough question and nowhere to ask it.<sup>*</sup></div>
-    <div class="cite">*Drawn from <span id="cite-men">679</span> men who&#8217;ve submitted answers &middot; <span class="ulink" onclick="giveStrength()">submit yours &rarr;</span></div>
+    <div class="cite">*Drawn from <span id="cite-men">678</span> men who&#8217;ve submitted answers &middot; <span class="ulink" onclick="giveStrength()">submit yours &rarr;</span></div>
 
     <!-- the response loop renders here -->
     <div id="res"></div>
@@ -287,7 +287,7 @@
 <div class="footer">
   <div class="pills">
     <div class="pill" onclick="openGetStrength()">
-      <span class="pt">Get strength</span><span class="ps">read what 500+ men shared</span>
+      <span class="pt">Get strength</span><span class="ps">read what <span id="pill-men">678</span> men shared</span>
     </div>
     <div class="pill" onclick="giveStrength()">
       <span class="pt">Give strength</span><span class="ps">add yours, anonymously</span>
@@ -472,6 +472,7 @@ const FN=SB_URL+'/functions/v1';
 const H={apikey:SB_KEY,Authorization:'Bearer '+SB_KEY,'Content-Type':'application/json'};
 /* Founding Dads — Five Questions (form GYKhzxwT, confirmed live by Sam 15 Jun). Answer 5 Qs + responder signup. */
 const GIVE_STRENGTH_URL='https://sam774431.typeform.com/to/GYKhzxwT';
+let LIVE_MEN=null;
 
 /* ===================== ROLLING EXAMPLES ===================== */
 const EXAMPLES=[
@@ -827,7 +828,7 @@ async function loadDir(){
       if(row.questions&&row.questions.canonical)qq.textContent='> '+row.questions.canonical;
       const aa=document.createElement('div');aa.className='aa';aa.textContent='“'+row.answer_text+'”';
       const hm=document.createElement('div');hm.className='hm';
-      hm.textContent=(row.themes&&row.themes.name?row.themes.name.toLowerCase():'verbatim')+' · one of 500+ men';
+      hm.textContent=(row.themes&&row.themes.name?row.themes.name.toLowerCase():'verbatim')+' · one of '+(LIVE_MEN?LIVE_MEN.toLocaleString():'500+')+' men';
       if(qq.textContent)d.appendChild(qq);
       d.appendChild(aa);d.appendChild(hm);
       grid.appendChild(d);
@@ -890,10 +891,12 @@ async function loadStats(){
     const r=await fetch(SB_URL+'/rest/v1/public_stats?select=answers,men',{headers:H});
     const j=await r.json();const s=Array.isArray(j)?j[0]:j;
     if(s){
-      const a=document.getElementById('stat-answers'),m=document.getElementById('stat-men'),cm=document.getElementById('cite-men');
+      const a=document.getElementById('stat-answers'),m=document.getElementById('stat-men'),cm=document.getElementById('cite-men'),pm=document.getElementById('pill-men');
+      if(s.men!=null)LIVE_MEN=+s.men;
       if(a&&s.answers!=null)a.textContent=(+s.answers).toLocaleString();
       if(m&&s.men!=null)m.textContent=(+s.men).toLocaleString();
       if(cm&&s.men!=null)cm.textContent=(+s.men).toLocaleString();
+      if(pm&&s.men!=null)pm.textContent=(+s.men).toLocaleString();
     }
   }catch(e){}
 }
