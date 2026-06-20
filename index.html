@@ -277,7 +277,7 @@
 
     <!-- demoted stat + citation — quiet, below the ask -->
     <div class="context">80% of men said they had a tough question and nowhere to ask it.<sup>*</sup></div>
-    <div class="cite">*Dadosphere research &middot; 509 men &middot; 2026</div>
+    <div class="cite">*Drawn from <span id="cite-men">679</span> men who&#8217;ve submitted answers, and growing &middot; <span class="ulink" onclick="giveStrength()">submit yours &rarr;</span></div>
 
     <!-- the response loop renders here -->
     <div id="res"></div>
@@ -890,9 +890,10 @@ async function loadStats(){
     const r=await fetch(SB_URL+'/rest/v1/public_stats?select=answers,men',{headers:H});
     const j=await r.json();const s=Array.isArray(j)?j[0]:j;
     if(s){
-      const a=document.getElementById('stat-answers'),m=document.getElementById('stat-men');
+      const a=document.getElementById('stat-answers'),m=document.getElementById('stat-men'),cm=document.getElementById('cite-men');
       if(a&&s.answers!=null)a.textContent=(+s.answers).toLocaleString();
       if(m&&s.men!=null)m.textContent=(+s.men).toLocaleString();
+      if(cm&&s.men!=null)cm.textContent=(+s.men).toLocaleString();
     }
   }catch(e){}
 }
