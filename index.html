@@ -731,13 +731,13 @@ function render(data){
   typeInto(a,'“'+ans.text+'”',()=>{
     plsbl('answer_served',{props:{answer_theme:(theme.name||'unknown')}});
     /* 3 — feedback row, BEFORE the resources: Yes / Ask a different question */
+    /* 3 — "did this land?" is the primary reaction now (the old "Yes/more" path was removed 21 Jun — the vote covers sentiment) */
+    renderLand(currentQuery, ans.id);
+    /* navigation: ask a different question */
     const ag=document.createElement('div');ag.className='again';
-    ag.innerHTML='<span class="yes" data-a="more">Yes</span> &nbsp;&middot;&nbsp; <span class="yes" data-a="new">Ask a different question</span>';
-    ag.querySelector('[data-a="more"]').onclick=another;
+    ag.innerHTML='<span class="yes" data-a="new">Ask a different question</span>';
     ag.querySelector('[data-a="new"]').onclick=()=>{goHome();focusAsk();};
     res.appendChild(ag);
-    /* 3b — "did this land?" quality vote: signal on matching, logged with the question + answer id */
-    renderLand(currentQuery, ans.id);
     /* 4 — the bridge line into sharing (collapsible contribute) */
     renderContribute(theme.id);
     /* 5 — Three things to stay with you */
