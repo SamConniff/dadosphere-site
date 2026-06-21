@@ -122,6 +122,18 @@
   #res .again{margin-top:30px;font-size:13px;color:var(--ink2)}
   #res .again .yes{color:#fff;cursor:pointer;user-select:none;text-decoration:underline;text-decoration-color:var(--g);text-decoration-thickness:2px;text-underline-offset:5px;margin-left:10px}
   #res .h{color:var(--ink3);font-size:12.5px}
+  /* per-answer "did this land?" vote — quality signal on matching, in voice */
+  #res .land{margin-top:14px;font-size:12.5px;color:var(--ink3)}
+  #res .land .lq{margin-right:9px}
+  #res .land .lv{color:var(--ink1);cursor:pointer;user-select:none;text-decoration:underline;text-decoration-color:var(--g);text-decoration-thickness:2px;text-underline-offset:4px}
+  #res .land .lv:hover{color:#fff}
+  #res .land .lsep{color:var(--ink4);margin:0 7px}
+  #res .land .lin{margin-top:12px;display:none}
+  #res .land .lin.on{display:block}
+  #res .land input{background:transparent;border:none;outline:none;border-bottom:1px solid var(--ink4);color:#fff;font-family:var(--mono);font-size:13.5px;width:100%;max-width:520px;padding-bottom:5px;display:block}
+  #res .land input:focus{border-bottom-color:var(--ink2)}
+  #res .land input::placeholder{color:var(--ink3)}
+  #res .land .lsend{margin-top:9px;display:inline-block;font-size:12.5px;color:#fff;cursor:pointer;user-select:none;text-decoration:underline;text-decoration-color:var(--g);text-decoration-thickness:2px;text-underline-offset:4px}
 
   .contrib{margin-top:34px;border-top:1px solid var(--ink4);padding-top:22px}
   .contrib .invite{color:var(--ink1);font-size:13.5px;line-height:1.6}
@@ -146,6 +158,16 @@
   .pill .ps{font-size:11.5px;color:var(--ink2)}
   .anon{font-size:12px;color:var(--ink2);line-height:1.9}
   .anon .mono{color:var(--ink3);font-size:11px}
+  /* quiet experiment / feedback line under the footer */
+  .exptline{margin-top:18px;font-size:11.5px;color:var(--ink3);line-height:1.6}
+  .exptline .ulink{color:var(--ink2)}
+  .exptline .ulink:hover{color:#fff}
+  /* general feedback panel */
+  #p-feedback textarea{background:transparent;border:none;outline:none;border-bottom:1px solid var(--ink4);color:#fff;font-family:var(--mono);font-size:15px;width:100%;max-width:620px;padding-bottom:6px;resize:none;display:block;line-height:1.6;margin-top:10px}
+  #p-feedback textarea:focus{border-bottom-color:var(--ink2)}
+  #p-feedback textarea::placeholder{color:var(--ink3)}
+  #p-feedback .cgo{margin-top:18px;font-size:13px;color:#fff;cursor:pointer;user-select:none;width:fit-content;text-decoration:underline;text-decoration-color:var(--g);text-decoration-thickness:2px;text-underline-offset:5px}
+  #p-feedback .cmsg{color:var(--ink2);font-size:12.5px;margin-top:14px;min-height:18px;line-height:1.5}
   /* always-present crisis line (Safeguarding Policy §7) */
   .crisisline{font-size:11px;color:var(--ink3);line-height:1.75;margin:16px auto 0;max-width:620px}
 
@@ -299,6 +321,7 @@
     The Dadosphere is 100% anonymous.<br>
     <span class="mono">Cookies are for monsters.</span>
   </div>
+  <div class="exptline">a DIY experiment, still early &mdash; <span class="ulink" onclick="openFeedback()">tell us what&#8217;s working &rarr;</span></div>
 </div>
 </div><!-- /oracle -->
 
@@ -463,6 +486,21 @@
   </div>
 </div>
 
+<!-- FEEDBACK (anonymous, one-way, NOT monitored in real time — caveat + support signpost built in) -->
+<div class="panel" id="p-feedback">
+  <div class="back" onclick="goHome()">&larr; back</div>
+  <div class="pin">
+    <h2>tell us what&#8217;s working</h2>
+    <div style="height:14px"></div>
+    <p>The Dadosphere is a very DIY experiment, and it&#8217;s early days &mdash; it might not work as hoped. Feedback, criticism, ideas, observations: all welcome, all anonymous. It&#8217;s how this gets better.</p>
+    <p class="dim">Heads up &mdash; this box isn&#8217;t monitored in real time, so it&#8217;s not the place if you need someone right now. If today&#8217;s hard, tap <span class="give" onclick="openPanel('support')">support &rarr;</span>. In danger right now, call 999.</p>
+    <textarea id="fb-text" rows="5" maxlength="2000" placeholder="what&#8217;s working, what isn&#8217;t, what you&#8217;d change&#8230;" aria-label="your feedback"></textarea>
+    <input class="hpf" id="fb-hp" tabindex="-1" autocomplete="off" aria-hidden="true">
+    <div class="cgo" id="fb-go">[send]</div>
+    <div class="cmsg" id="fb-msg"></div>
+  </div>
+</div>
+
 <script>
 /* ===================== PLAUSIBLE ===================== */
 function plsbl(e,opts){try{window.plausible&&window.plausible(e,opts)}catch(ex){}}
@@ -603,12 +641,27 @@ askEl.addEventListener('focus',()=>{
 askEl.addEventListener('blur',()=>{ if(!askEl.value.trim()) document.getElementById('cur').style.display='none'; });
 ['f1','f2','f3'].forEach(id=>{const el=document.getElementById(id);if(el)el.addEventListener('input',toggleAskBtn);});
 
-async function searchOracle(q,exclude){
+const ORACLE_TIMEOUT=25000; /* generous: a cold start can take ~5-8s; never give up early */
+function warming(){ if(res) res.innerHTML='<div class="h">warming up the dadosphere<span class="cursor"></span></div>'; }
+async function fetchOracleOnce(q,exclude){
+  const ctrl=new AbortController();
+  const t=setTimeout(()=>ctrl.abort(),ORACLE_TIMEOUT);
   try{
     const r=await fetch(FN+'/oracle-search',{method:'POST',headers:H,
-      body:JSON.stringify({query:q,exclude_ids:exclude})});
-    return await r.json();
-  }catch(e){return {error:String(e)}}
+      body:JSON.stringify({query:q,exclude_ids:exclude}),signal:ctrl.signal});
+    if(!r.ok) throw new Error('http '+r.status);
+    return await r.json(); /* throws if the body isn't JSON (e.g. a gateway error page) */
+  }finally{ clearTimeout(t); }
+}
+/* one automatic retry: a single cold-start hiccup or transient blip shouldn't dead-end a visitor */
+async function searchOracle(q,exclude){
+  for(let attempt=0; attempt<2; attempt++){
+    try{ return await fetchOracleOnce(q,exclude); }
+    catch(e){
+      if(attempt===0){ warming(); await new Promise(r=>setTimeout(r,800)); continue; }
+      return {error:String(e)};
+    }
+  }
 }
 async function ask(q){
   if(busy)return; busy=true;
@@ -683,6 +736,8 @@ function render(data){
     ag.querySelector('[data-a="more"]').onclick=another;
     ag.querySelector('[data-a="new"]').onclick=()=>{goHome();focusAsk();};
     res.appendChild(ag);
+    /* 3b — "did this land?" quality vote: signal on matching, logged with the question + answer id */
+    renderLand(currentQuery, ans.id);
     /* 4 — the bridge line into sharing (collapsible contribute) */
     renderContribute(theme.id);
     /* 5 — Three things to stay with you */
@@ -770,6 +825,45 @@ function giveStrength(){
   }
 }
 function nominate(){window.location.href='mailto:sam@thedadosphere.com?subject=A%20resource%20you%27re%20missing';}
+
+/* ===================== FEEDBACK (anonymous, insert-only) ===================== */
+async function sendFeedback(p){
+  try{
+    const r=await fetch(SB_URL+'/rest/v1/feedback',{method:'POST',headers:Object.assign({},H,{Prefer:'return=minimal'}),body:JSON.stringify(p)});
+    return r.ok;
+  }catch(e){return false;}
+}
+/* per-answer "did this land?" — logs the vote with the question + answer id; ✗ opens an optional "what were you hoping for?" */
+function renderLand(q, answerId){
+  const box=document.createElement('div');box.className='land';res.appendChild(box);
+  const thanks=(t)=>{box.innerHTML='';const s=document.createElement('span');s.className='lq';s.style.color='var(--ink2)';s.textContent=t;box.appendChild(s);};
+  const why=()=>{
+    box.innerHTML='<span class="lq">thanks &mdash; what were you hoping for?</span>'+
+      '<div class="lin on"><input maxlength="300" placeholder="in a line&#8230; (optional)" aria-label="what were you hoping for"><span class="lsend">[send]</span></div>';
+    const inp=box.querySelector('input');
+    const send=()=>{const t=inp.value.trim();if(t)sendFeedback({kind:'answer_vote',vote:'down',query:q,answer_id:answerId,comment:t});thanks(t?'noted — thanks for the detail.':'noted — thanks.');};
+    box.querySelector('.lsend').onclick=send;
+    inp.addEventListener('keydown',e=>{if(e.key==='Enter')send();});
+    try{inp.focus();}catch(e){}
+  };
+  box.innerHTML='<span class="lq">did this land?</span><span class="lv" data-v="up">yes</span><span class="lsep">&middot;</span><span class="lv" data-v="down">not quite</span>';
+  box.querySelector('[data-v="up"]').onclick=()=>{plsbl('answer_vote',{props:{vote:'up'}});sendFeedback({kind:'answer_vote',vote:'up',query:q,answer_id:answerId});thanks('noted — thanks.');};
+  box.querySelector('[data-v="down"]').onclick=()=>{plsbl('answer_vote',{props:{vote:'down'}});sendFeedback({kind:'answer_vote',vote:'down',query:q,answer_id:answerId});why();};
+}
+function openFeedback(){plsbl('feedback_opened');openPanel('feedback');try{document.getElementById('fb-text').focus();}catch(e){}}
+function wireFeedbackPanel(){
+  const go=document.getElementById('fb-go');if(!go)return;
+  go.onclick=async()=>{
+    const hp=document.getElementById('fb-hp');if(hp&&hp.value)return; /* honeypot */
+    const ta=document.getElementById('fb-text'),msg=document.getElementById('fb-msg');
+    const t=ta.value.trim();
+    if(t.length<3){msg.textContent='a line or two — whatever’s on your mind.';return;}
+    msg.textContent='…';
+    const ok=await sendFeedback({kind:'general',comment:t});
+    if(ok){plsbl('feedback_submitted');msg.textContent='got it. thank you — this genuinely shapes what the dadosphere becomes.';ta.value='';ta.disabled=true;go.style.display='none';}
+    else{msg.textContent='that didn’t go through — try again, or email sam@thedadosphere.com';}
+  };
+}
 
 /* ===================== GET STRENGTH SPACE: tabs ===================== */
 function openGetStrength(tab){
@@ -904,13 +998,14 @@ async function loadStats(){
 }
 
 /* deep-link routing: /#faq and /#support open the matching panel (so other pages can link straight in) */
-function routeHash(){var h=(location.hash||'').replace('#','');if(h==='faq'||h==='support'){openPanel(h);}}
+function routeHash(){var h=(location.hash||'').replace('#','');if(h==='faq'||h==='support'||h==='feedback'){openPanel(h);}}
 window.addEventListener('hashchange',routeHash);
 
 /* boot */
 startRoll();
 sizeAsk();
 loadStats();
+wireFeedbackPanel();
 routeHash();
 window.addEventListener('resize',sizeAsk);
 </script>
