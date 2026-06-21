@@ -510,6 +510,9 @@ const SB_URL='https://qbhdcajdspczccrmbjlx.supabase.co';
 const SB_KEY='sb_publishable_F-KLlYRNk5bnjGwH02pncg_Gax7BHU8';
 const FN=SB_URL+'/functions/v1';
 const H={apikey:SB_KEY,Authorization:'Bearer '+SB_KEY,'Content-Type':'application/json'};
+/* anonymous Ask evaluation log — random per-session token (NOT an identity), fire-and-forget, never blocks the Ask */
+const SESSION_TOKEN=(Math.random().toString(36).slice(2)+Date.now().toString(36));
+function logAsk(o){try{fetch(SB_URL+'/rest/v1/ask_log',{method:'POST',headers:Object.assign({},H,{Prefer:'return=minimal'}),body:JSON.stringify(Object.assign({session_token:SESSION_TOKEN},o))}).catch(function(){});}catch(e){}}
 /* Founding Dads — Five Questions (form GYKhzxwT, confirmed live by Sam 15 Jun). Answer 5 Qs + responder signup. */
 const GIVE_STRENGTH_URL='https://sam774431.typeform.com/to/GYKhzxwT';
 let LIVE_MEN=null;  /* live men count from Supabase public_stats; fills copy that quotes the number */
@@ -670,6 +673,7 @@ async function ask(q){
   loading();
   const data=await searchOracle(q,seen);
   busy=false;
+  logAsk({event:'ask',question:q,answer_id:(data&&data.answer&&data.answer.id)||null,theme_id:(data&&data.theme&&data.theme.id)||null,crisis:!!(data&&data.crisis),risk_to_others:!!(data&&data.risk_to_others)});
   render(data);
 }
 async function another(){
@@ -678,6 +682,7 @@ async function another(){
   loading();
   const data=await searchOracle(currentQuery,seen);
   busy=false;
+  logAsk({event:'another',question:currentQuery,answer_id:(data&&data.answer&&data.answer.id)||null,theme_id:(data&&data.theme&&data.theme.id)||null});
   render(data);
 }
 function loading(){res.innerHTML='<div class="h">consulting the dadosphere<span class="cursor"></span></div>';}
@@ -847,8 +852,8 @@ function renderLand(q, answerId){
     try{inp.focus();}catch(e){}
   };
   box.innerHTML='<span class="lq">did this land?</span><span class="lv" data-v="up">yes</span><span class="lsep">&middot;</span><span class="lv" data-v="down">not quite</span>';
-  box.querySelector('[data-v="up"]').onclick=()=>{plsbl('answer_vote',{props:{vote:'up'}});sendFeedback({kind:'answer_vote',vote:'up',query:q,answer_id:answerId});thanks('noted — thanks.');};
-  box.querySelector('[data-v="down"]').onclick=()=>{plsbl('answer_vote',{props:{vote:'down'}});sendFeedback({kind:'answer_vote',vote:'down',query:q,answer_id:answerId});why();};
+  box.querySelector('[data-v="up"]').onclick=()=>{plsbl('answer_vote',{props:{vote:'up'}});logAsk({event:'vote_up',question:q,answer_id:answerId});sendFeedback({kind:'answer_vote',vote:'up',query:q,answer_id:answerId});thanks('noted — thanks.');};
+  box.querySelector('[data-v="down"]').onclick=()=>{plsbl('answer_vote',{props:{vote:'down'}});logAsk({event:'vote_down',question:q,answer_id:answerId});sendFeedback({kind:'answer_vote',vote:'down',query:q,answer_id:answerId});why();};
 }
 function openFeedback(){plsbl('feedback_opened');openPanel('feedback');try{document.getElementById('fb-text').focus();}catch(e){}}
 function wireFeedbackPanel(){
