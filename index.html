@@ -673,7 +673,7 @@ async function ask(q){
   loading();
   const data=await searchOracle(q,seen);
   busy=false;
-  logAsk({event:'ask',question:q,answer_id:(data&&data.answer&&data.answer.id)||null,theme_id:(data&&data.theme&&data.theme.id)||null,crisis:!!(data&&data.crisis),risk_to_others:!!(data&&data.risk_to_others)});
+  logAsk({event:'ask',question:q,answer_id:(data&&data.answer&&data.answer.id)||null,theme_id:(data&&data.theme&&data.theme.id)||null,crisis:!!(data&&data.crisis),risk_to_others:!!(data&&data.risk_to_others),weak_match:!!(data&&data.weak_match)});
   render(data);
 }
 async function another(){
@@ -682,7 +682,7 @@ async function another(){
   loading();
   const data=await searchOracle(currentQuery,seen);
   busy=false;
-  logAsk({event:'another',question:currentQuery,answer_id:(data&&data.answer&&data.answer.id)||null,theme_id:(data&&data.theme&&data.theme.id)||null});
+  logAsk({event:'another',question:currentQuery,answer_id:(data&&data.answer&&data.answer.id)||null,theme_id:(data&&data.theme&&data.theme.id)||null,weak_match:!!(data&&data.weak_match)});
   render(data);
 }
 function loading(){res.innerHTML='<div class="h">consulting the dadosphere<span class="cursor"></span></div>';}
@@ -704,7 +704,7 @@ function renderSafety(data){
   if(s.line&&s.line.url){
     const a=document.createElement('a');a.className='safl';a.href=s.line.url;a.target='_blank';a.rel='noopener';
     a.textContent=s.line.name+' →';
-    a.addEventListener('click',()=>plsbl('resource_link_clicked',{props:{resource_name:s.line.name}}));
+    a.addEventListener('click',()=>{plsbl('resource_link_clicked',{props:{resource_name:s.line.name}});logAsk({event:'resource_click',question:currentQuery,detail:{name:s.line.name,where:'safety'}});});
     box.appendChild(a);
   }
   res.appendChild(box);
@@ -723,6 +723,14 @@ function render(data){
   }
   const ans=data.answer, theme=data.theme||{}, resources=data.resources||[];
   if(ans.id!=null)seen.push(ans.id);
+  /* weak match (v15): the closest answer shares little with the question — frame it honestly, still show it.
+     Suppressed when a crisis/harm safety card is already leading, so we don't clutter the urgent path. */
+  if(data.weak_match && !data.crisis && !data.risk_to_others){
+    const wf=document.createElement('div');wf.className='weakframe';
+    wf.style.cssText='color:var(--ink3);font-size:13px;line-height:1.55;margin-bottom:12px';
+    wf.textContent="no one's asked quite this yet — here's a man on something close. if it doesn't fit, you can add your own below.";
+    res.appendChild(wf);
+  }
   /* 3.1 — matched-themes tag at the TOP: man · age band · the matched semantic themes */
   const tag=document.createElement('div');tag.className='mtag';
   const lab=document.createElement('div');lab.className='mtlab';lab.textContent='matched themes';tag.appendChild(lab);
@@ -753,12 +761,13 @@ function render(data){
         const it=document.createElement('div');it.className='resitem';
         if(r.slot){const k=document.createElement('span');k.className='rk';k.textContent=r.slot;it.appendChild(k);}
         const link=document.createElement('a');link.href=r.url;link.target='_blank';link.rel='noopener';link.textContent=r.name;
-        link.addEventListener('click',()=>plsbl('resource_link_clicked',{props:{resource_name:r.name}}));
+        link.addEventListener('click',()=>{plsbl('resource_link_clicked',{props:{resource_name:r.name}});logAsk({event:'resource_click',question:currentQuery,answer_id:ans.id,detail:{name:r.name,where:'answer',slot:r.slot||null}});});
         it.appendChild(link);
         if(r.description){const dd=document.createElement('div');dd.className='rd';dd.textContent=r.description;it.appendChild(dd);}
         rl.appendChild(it);
       });
       res.appendChild(rl);
+      logAsk({event:'resources_shown',question:currentQuery,answer_id:ans.id,detail:{resources:resources.map(r=>({name:r.name,slot:r.slot||null}))}});
     }
     const dir=document.createElement('div');dir.className='dir';
     dir.innerHTML='<span class="ulink">browse all the experience shares &amp; the black book</span>';
@@ -884,6 +893,7 @@ function switchTab(t){
   document.getElementById('view-exp').style.display=t==='exp'?'block':'none';
   document.getElementById('view-dir').style.display=t==='dir'?'block':'none';
   plsbl('tab_switched',{props:{tab:t}});
+  logAsk({event:t==='dir'?'directory_open':'gallery_view'});
   if(t==='dir'&&!resInit)initResources();
   if(t==='dir'&&!resLoaded){resLoaded=true;loadResources();}
 }
@@ -898,11 +908,11 @@ function initAnswers(){
   const chips=document.getElementById('chips');
   THEMES.forEach(([id,name])=>{
     const c=document.createElement('div');c.className='chip'+(id===0?' on':'');c.textContent=name;
-    c.onclick=()=>{dTheme=id;dOffset=0;document.getElementById('cards').innerHTML='';[...chips.children].forEach(x=>x.classList.remove('on'));c.classList.add('on');loadDir();};
+    c.onclick=()=>{dTheme=id;dOffset=0;document.getElementById('cards').innerHTML='';[...chips.children].forEach(x=>x.classList.remove('on'));c.classList.add('on');logAsk({event:'gallery_filter',detail:{theme:name}});loadDir();};
     chips.appendChild(c);
   });
   let t=null;
-  document.getElementById('gsearch').addEventListener('input',e=>{clearTimeout(t);t=setTimeout(()=>{dq=e.target.value.trim();dOffset=0;document.getElementById('cards').innerHTML='';loadDir();},420);});
+  document.getElementById('gsearch').addEventListener('input',e=>{clearTimeout(t);t=setTimeout(()=>{dq=e.target.value.trim();dOffset=0;document.getElementById('cards').innerHTML='';if(dq)logAsk({event:'gallery_search',detail:{q:dq}});loadDir();},420);});
 }
 async function liveCount(){
   try{
@@ -947,11 +957,11 @@ function initResources(){
   const chips=document.getElementById('rchips');
   THEMES.forEach(([id,name])=>{
     const c=document.createElement('div');c.className='chip'+(id===0?' on':'');c.textContent=name;
-    c.onclick=()=>{rTheme=id;rOffset=0;document.getElementById('rcards').innerHTML='';[...chips.children].forEach(x=>x.classList.remove('on'));c.classList.add('on');loadResources();};
+    c.onclick=()=>{rTheme=id;rOffset=0;document.getElementById('rcards').innerHTML='';[...chips.children].forEach(x=>x.classList.remove('on'));c.classList.add('on');logAsk({event:'directory_filter',detail:{theme:name}});loadResources();};
     chips.appendChild(c);
   });
   let t=null;
-  document.getElementById('rsearch').addEventListener('input',e=>{clearTimeout(t);t=setTimeout(()=>{rq=e.target.value.trim();rOffset=0;document.getElementById('rcards').innerHTML='';loadResources();},420);});
+  document.getElementById('rsearch').addEventListener('input',e=>{clearTimeout(t);t=setTimeout(()=>{rq=e.target.value.trim();rOffset=0;document.getElementById('rcards').innerHTML='';if(rq)logAsk({event:'directory_search',detail:{q:rq}});loadResources();},420);});
 }
 async function loadResources(){
   document.getElementById('rmore').style.display='none';
@@ -968,7 +978,7 @@ async function loadResources(){
       const d=document.createElement('div');d.className='card rcard';
       const rn=document.createElement('div');rn.className='rn';
       const a=document.createElement('a');a.href=row.url;a.target='_blank';a.rel='noopener';a.textContent=row.name;
-      a.addEventListener('click',()=>plsbl('resource_link_clicked',{props:{resource_name:row.name}}));
+      a.addEventListener('click',()=>{plsbl('resource_link_clicked',{props:{resource_name:row.name}});logAsk({event:'resource_click',detail:{name:row.name,where:'directory'}});});
       rn.appendChild(a);
       const rw=document.createElement('div');rw.className='rw';rw.textContent=row.what_it_is||'';
       const rt=document.createElement('div');rt.className='rt';rt.textContent=[row.category,row.format].filter(Boolean).join(' · ');
