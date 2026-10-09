@@ -10,7 +10,7 @@
 <meta name="robots" content="index, follow">
 <meta name="description" content="A social experiment in collective intelligence and lived experience for the questions men and boys often carry alone. Anonymous answers, verbatim, from real men. No chatbot. No advice.">
 <meta property="og:title" content="THE DADOSPHERE">
-<meta property="og:description" content="The questions men carry alone, answered by 600+ men. Anonymous. Verbatim. Ask anything.">
+<meta property="og:description" content="The questions men carry alone, answered by 600+ men. Anonymous. Verbatim. Search what they shared.">
 <meta property="og:url" content="https://thedadosphere.com">
 <meta property="og:type" content="website">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -69,6 +69,15 @@
   #askbtn{display:none;margin-top:24px;font-family:var(--monb);font-weight:700;font-size:14px;color:#000;background:var(--g);border:none;border-radius:999px;padding:11px 28px;cursor:pointer;user-select:none;letter-spacing:.02em;transition:transform .15s}
   #askbtn.show{display:inline-block;animation:fadein .3s ease}
   #askbtn:hover{transform:translateY(-1px)}
+  /* ARCHIVED 9 Oct 2026 — Ask paused, gallery-only. Ask DOM kept (hidden) so it can be switched back on. */
+  body.paused .askwrap{display:none}
+  .pausedwrap{display:none}
+  body.paused .pausedwrap{display:block}
+  .pausedwrap .ph{font-size:clamp(20px,3vw,30px);color:#fff;display:flex;align-items:baseline;gap:8px}
+  .pausedwrap .ph .p{color:var(--g)}
+  .pausedwrap .pb{font-size:14.5px;color:var(--ink1);line-height:1.6;margin-top:16px;max-width:560px}
+  .pausedwrap .go{display:inline-block;margin-top:24px;font-family:var(--monb);font-weight:700;font-size:14px;color:#000;background:var(--g);border:none;border-radius:999px;padding:11px 28px;cursor:pointer;user-select:none;letter-spacing:.02em;transition:transform .15s}
+  .pausedwrap .go:hover{transform:translateY(-1px)}
 
   /* the framer — progressive disclosure, hidden until hesitation/deletion */
   .framenudge{margin-top:20px;font-size:13px;color:var(--ink2);cursor:pointer;user-select:none;width:fit-content;
@@ -260,7 +269,7 @@
   }
 </style>
 </head>
-<body>
+<body class="paused">
 
 <!-- Password gate REMOVED 17 Jun 2026 (Sam's call — open for the final days before the Father's Day launch). Live and public. -->
 
@@ -273,6 +282,13 @@
 <main>
   <h1 class="sronly">THE DADOSPHERE — the questions men carry alone, answered by men. Anonymous, verbatim, no advice.</h1>
   <div class="one">
+
+    <!-- ASK PAUSED (9 Oct 2026) — gallery-only. To reopen: remove class="paused" from <body>. -->
+    <div class="pausedwrap">
+      <div class="ph"><span class="p">&gt;</span><span>new questions are paused<span class="cursor"></span></span></div>
+      <p class="pb">We&#8217;ve paused new questions while we catch up on the ones men have already asked. The answers so far are all here.</p>
+      <button class="go" type="button" onclick="openGetStrength()">Read what <span id="paused-men">678</span> men shared &rarr;</button>
+    </div>
 
     <!-- THE ASK — the hero -->
     <div class="askwrap">
@@ -375,7 +391,7 @@
     <ol class="faqshort">
       <li>This is not an advice or support service. It's an experiment in authentic intelligence: a searchable database of honest insight, lived experience and real support services.</li>
       <li>Every answer is submitted by a real man and human-moderated before it's matched to one of 10 themes research links to men's mental health.</li>
-      <li>Ask any question and those same 10 themes find you an answer. It won't be a reply to your exact question. It's honest insight from another man that might just help.</li>
+      <li>New questions are paused for now while we catch up on the ones men have already asked. Everything men have shared so far is here to search, by theme or by word.</li>
       <li>You can submit questions, answers, or suggest services. A human moderates everything before it goes anywhere near the site.</li>
       <li>The Dadosphere is 100% anonymous. Answers are stored on a UK server with no personal identifying information, ever.</li>
     </ol>
@@ -471,7 +487,7 @@
   <div class="pin">
     <h2>support</h2>
     <div style="height:14px"></div>
-    <p>Ask anything here and what comes back is matched to what you actually said — including who to talk to. You don't have to ask first, though. These are real and they're there now — from a room full of blokes to someone on the end of a line:</p>
+    <p>These are real and they're there now — from a room full of blokes to someone on the end of a line:</p>
     <div class="siglist">
       <b><a href="https://andysmanclub.co.uk" target="_blank" rel="noopener">Andy's Man Club</a></b> — free peer talking groups for men, every Monday, no referral<br>
       <b><a href="https://talkclub.org" target="_blank" rel="noopener">Talk Club</a></b> — men's talking groups built on one question: "how are you, out of 10?"<br>
@@ -1008,6 +1024,7 @@ async function loadStats(){
       if(m&&s.men!=null)m.textContent=(+s.men).toLocaleString();
       if(cm&&s.men!=null)cm.textContent=(+s.men).toLocaleString();
       if(pm&&s.men!=null)pm.textContent=(+s.men).toLocaleString();
+      var pz=document.getElementById('paused-men');if(pz&&s.men!=null)pz.textContent=(+s.men).toLocaleString();
     }
   }catch(e){}
 }
@@ -1017,7 +1034,7 @@ function routeHash(){var h=(location.hash||'').replace('#','');if(h==='faq'||h==
 window.addEventListener('hashchange',routeHash);
 
 /* boot */
-startRoll();
+if(!document.body.classList.contains('paused'))startRoll();
 sizeAsk();
 loadStats();
 wireFeedbackPanel();
