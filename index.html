@@ -71,6 +71,7 @@
   #askbtn:hover{transform:translateY(-1px)}
   /* ARCHIVED 9 Oct 2026 — Ask paused, gallery-only. Ask DOM kept (hidden) so it can be switched back on. */
   body.paused .askwrap{display:none}
+  .pausedonly{display:none} body.paused .pausedonly{display:list-item} body.paused .liveonly{display:none}
   .pausedwrap{display:none}
   body.paused .pausedwrap{display:block}
   .pausedwrap .ph{font-size:clamp(20px,3vw,30px);color:#fff;display:flex;align-items:baseline;gap:8px}
@@ -314,7 +315,7 @@
   <h1 class="sronly">THE DADOSPHERE — the questions men carry alone, answered by men. Anonymous, verbatim, no advice.</h1>
   <div class="one">
 
-    <!-- ASK PAUSED (9 Oct 2026) — gallery-only. To reopen: remove class="paused" from <body>. -->
+    <!-- ASK SWITCH (10 Oct 2026): the page boots paused and opens only when Supabase public.oracle_config ask_enabled = true. -->
     <div class="pausedwrap">
       <div class="ph"><span class="p">&gt;</span><span>new questions are paused<span class="cursor"></span></span></div>
       <p class="pb">We&#8217;ve paused new questions while we catch up on the ones men have already asked. The answers so far are all here.</p>
@@ -422,7 +423,8 @@
     <ol class="faqshort">
       <li>This is not an advice or support service. It's an experiment in authentic intelligence: a searchable database of honest insight, lived experience and real support services.</li>
       <li>Every answer is submitted by a real man and human-moderated before it's matched to one of 10 themes research links to men's mental health.</li>
-      <li>New questions are paused for now while we catch up on the ones men have already asked. Everything men have shared so far is here to search, by theme or by word.</li>
+      <li class="pausedonly">New questions are paused for now while we catch up on the ones men have already asked. Everything men have shared so far is here to search, by theme or by word.</li>
+      <li class="liveonly">Some answers are now woven together from what several men here have said (beta). Every highlighted phrase is a man's exact words, and their full answers sit right underneath. Nothing is invented, and it never gives advice.</li>
       <li>You can submit questions, answers, or suggest services. A human moderates everything before it goes anywhere near the site.</li>
       <li>The Dadosphere is 100% anonymous. Answers are stored on a UK server with no personal identifying information, ever.</li>
     </ol>
