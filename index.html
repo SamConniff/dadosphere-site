@@ -720,11 +720,14 @@ async function ask(q){
   currentQuery=q; seen=[];
   plsbl('question_submitted');
   loading();
+  /* weaving takes 10-20s: say what's happening so it never looks stuck */
+  const slow=WEAVE_ON?setTimeout(()=>{if(busy&&res)res.innerHTML='<div class="h">weaving together what men here have said<span class="cursor"></span></div>';},3500):null;
   /* the engine (safety, resources, one man's answer) and the weave run side by side */
   const [data,w]=await Promise.all([searchOracle(q,seen), WEAVE_ON?fetchWeave(q):Promise.resolve(null)]);
-  busy=false;
+  busy=false; if(slow)clearTimeout(slow);
   if(data&&data.paused){res.innerHTML='';return;}
   const mode=(w&&w.mode)||'off';
+  CURRENT_SITUATION=(w&&w.situation)||null;
   logAsk({event:'ask',question:q,answer_id:(data&&data.answer&&data.answer.id)||null,theme_id:(data&&data.theme&&data.theme.id)||null,crisis:!!(data&&data.crisis),risk_to_others:!!(data&&data.risk_to_others),weak_match:!!(data&&data.weak_match),detail:{weave:mode}});
   /* safety always wins: a crisis or risk-to-others question gets the signed-off v15 path, never a weave */
   if(data&&!data.error&&!data.crisis&&!data.risk_to_others){
@@ -834,7 +837,7 @@ function renderAfter(ansId,theme,resources,opts){
       logAsk({event:'resources_shown',question:currentQuery,answer_id:ans.id,detail:{resources:resources.map(r=>({name:r.name,slot:r.slot||null}))}});
     }
     const sf=document.createElement('div');sf.className='sfind';res.appendChild(sf);
-    renderSupportFinder(sf,opts.situation||null,'answer');
+    renderSupportFinder(sf,opts.situation||CURRENT_SITUATION||null,'answer');
     const dir=document.createElement('div');dir.className='dir';
     dir.innerHTML='<span class="ulink">browse all the experience shares &amp; the black book</span>';
     dir.firstChild.onclick=()=>openGetStrength();
@@ -844,7 +847,7 @@ function renderAfter(ansId,theme,resources,opts){
 /* ===================== WOVEN ANSWERS (Tier 2, Oct 2026) =====================
    Server-side switches live in Supabase public.oracle_config (ask_enabled, weave_enabled).
    ?preview=<key> lets Sam test the whole flow before the switches are flipped. */
-let WEAVE_ON=false, PREVIEW=null;
+let WEAVE_ON=false, PREVIEW=null, CURRENT_SITUATION=null;
 try{const p=new URLSearchParams(location.search).get('preview');if(p){sessionStorage.setItem('dsPreview',p);}PREVIEW=sessionStorage.getItem('dsPreview');}catch(e){}
 function fnHeaders(){return PREVIEW?Object.assign({},H,{'x-weave-preview':PREVIEW}):H;}
 function setPaused(on){document.body.classList.toggle('paused',!!on);}
@@ -859,7 +862,7 @@ async function loadSwitches(){
   setPaused(!ask);
   if(ask)startRoll();
 }
-const WEAVE_TIMEOUT=30000;
+const WEAVE_TIMEOUT=45000; /* 50-question check, 10 Oct: avg 16s, worst 29s */
 async function fetchWeave(q){
   const ctrl=new AbortController();const t=setTimeout(()=>ctrl.abort(),WEAVE_TIMEOUT);
   try{
