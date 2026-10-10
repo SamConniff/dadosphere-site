@@ -71,6 +71,7 @@
   #askbtn:hover{transform:translateY(-1px)}
   /* ARCHIVED 9 Oct 2026 — Ask paused, gallery-only. Ask DOM kept (hidden) so it can be switched back on. */
   body.paused .askwrap{display:none}
+  .pausedonly{display:none} body.paused .pausedonly{display:list-item} body.paused .liveonly{display:none}
   .pausedwrap{display:none}
   body.paused .pausedwrap{display:block}
   .pausedwrap .ph{font-size:clamp(20px,3vw,30px);color:#fff;display:flex;align-items:baseline;gap:8px}
@@ -131,6 +132,37 @@
   #res .again{margin-top:30px;font-size:13px;color:var(--ink2)}
   #res .again .yes{color:#fff;cursor:pointer;user-select:none;text-decoration:underline;text-decoration-color:var(--g);text-decoration-thickness:2px;text-underline-offset:5px;margin-left:10px}
   #res .h{color:var(--ink3);font-size:12.5px}
+  /* woven answers (Tier 2, Oct 2026): woven first, the men it's made from underneath. Layout from the approved mockup. */
+  #res .wlabel{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink2);display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+  #res .wlabel .dot{width:7px;height:7px;border-radius:50%;background:var(--g);display:inline-block}
+  #res .wlabel .beta{border:1px solid var(--ink3);border-radius:999px;padding:1px 8px;font-size:10px;color:var(--ink3)}
+  #res .woven{font-size:17px;line-height:1.75;margin-top:12px;color:#fff;max-width:66ch;overflow-wrap:break-word}
+  #res .woven .q{color:#fff;background:rgba(255,45,135,.16);border-bottom:1px solid var(--g);cursor:pointer;padding:0 2px;transition:background .15s}
+  #res .woven .q:hover,#res .woven .q.on{background:var(--g);color:#000}
+  #res .woven .q:focus-visible,#res .src:focus-visible{outline:2px solid var(--g);outline-offset:3px}
+  #res .honest{font-size:15px;color:var(--ink1);margin-top:12px;max-width:62ch;line-height:1.65}
+  #res .men{margin-top:40px;border-top:1px solid var(--ink4);padding-top:20px}
+  #res .men .mh{font-family:var(--monb);font-weight:700;font-size:13.5px;color:#fff}
+  #res .men .ms{font-size:12px;color:var(--ink2);margin-top:4px}
+  #res .cards{display:grid;gap:14px;margin-top:16px}
+  #res .src{border:1px solid var(--ink4);border-radius:4px;padding:16px 18px;transition:border-color .2s,background .2s;min-width:0}
+  #res .src.on{border-color:var(--g);background:rgba(255,45,135,.05)}
+  #res .src .sq{font-size:12px;color:var(--ink2)}
+  #res .src .sq b{color:var(--g);font-weight:400}
+  #res .src .t{font-size:14.5px;color:#c9c9c9;margin-top:8px;white-space:pre-line;overflow-wrap:anywhere;line-height:1.6}
+  #res .src .t mark{background:transparent;color:#fff;border-bottom:1px solid var(--g)}
+  #res .src .meta{font-size:11px;color:var(--ink3);margin-top:10px}
+  /* support finder: pick your situation, see 1 to 3 services (gate 1B) */
+  .sfind{margin-top:28px;border-top:1px solid var(--ink4);padding-top:18px;max-width:640px}
+  .sfind .sfh{color:var(--ink3);font-size:11px;letter-spacing:.12em;text-transform:uppercase;margin-bottom:10px}
+  .sfind select{width:100%;max-width:520px;background:#000;color:#fff;border:1px solid var(--ink3);border-radius:4px;padding:9px 10px;font-family:var(--mono);font-size:13.5px}
+  .sfind select:focus{outline:2px solid var(--g);outline-offset:2px}
+  .sfind .sfl{margin-top:14px}
+  .sfind .sfi{margin-bottom:14px;font-size:13.5px;line-height:1.55}
+  .sfind .sfi a{color:#fff}
+  .sfind .sfi .sfw{color:var(--ink2);font-size:12.5px}
+  .sfind .sfi .sfc{color:var(--ink1);font-size:12.5px}
+  .sfind .sfnote{color:var(--ink3);font-size:12px;margin-top:6px}
   /* per-answer "did this land?" vote — quality signal on matching, in voice */
   #res .land{margin-top:14px;font-size:12.5px;color:var(--ink3)}
   #res .land .lq{margin-right:9px}
@@ -283,7 +315,7 @@
   <h1 class="sronly">THE DADOSPHERE — the questions men carry alone, answered by men. Anonymous, verbatim, no advice.</h1>
   <div class="one">
 
-    <!-- ASK PAUSED (9 Oct 2026) — gallery-only. To reopen: remove class="paused" from <body>. -->
+    <!-- ASK SWITCH (10 Oct 2026): the page boots paused and opens only when Supabase public.oracle_config ask_enabled = true. -->
     <div class="pausedwrap">
       <div class="ph"><span class="p">&gt;</span><span>new questions are paused<span class="cursor"></span></span></div>
       <p class="pb">We&#8217;ve paused new questions while we catch up on the ones men have already asked. The answers so far are all here.</p>
@@ -391,7 +423,8 @@
     <ol class="faqshort">
       <li>This is not an advice or support service. It's an experiment in authentic intelligence: a searchable database of honest insight, lived experience and real support services.</li>
       <li>Every answer is submitted by a real man and human-moderated before it's matched to one of 10 themes research links to men's mental health.</li>
-      <li>New questions are paused for now while we catch up on the ones men have already asked. Everything men have shared so far is here to search, by theme or by word.</li>
+      <li class="pausedonly">New questions are paused for now while we catch up on the ones men have already asked. Everything men have shared so far is here to search, by theme or by word.</li>
+      <li class="liveonly">Some answers are now woven together from what several men here have said (beta). Every highlighted phrase is a man's exact words, and their full answers sit right underneath. Nothing is invented, and it never gives advice.</li>
       <li>You can submit questions, answers, or suggest services. A human moderates everything before it goes anywhere near the site.</li>
       <li>The Dadosphere is 100% anonymous. Answers are stored on a UK server with no personal identifying information, ever.</li>
     </ol>
@@ -497,6 +530,7 @@
       <b><a href="https://giveusashout.org" target="_blank" rel="noopener">Shout</a></b> — free 24/7 text support: text SHOUT to 85258<br>
       <b><a href="https://hubofhope.co.uk" target="_blank" rel="noopener">Hub of Hope</a></b> — type your postcode, find support near you — the UK's biggest directory
     </div>
+    <div class="sfind" id="sfind-panel"></div>
     <p style="margin-top:26px"><span class="give" onclick="openGetStrength('dir')">Open the black book of men's provisions &rarr;</span></p>
     <p class="dim" style="margin-top:24px">who could you actually say it to, this week?</p>
   </div>
@@ -666,8 +700,9 @@ async function fetchOracleOnce(q,exclude){
   const ctrl=new AbortController();
   const t=setTimeout(()=>ctrl.abort(),ORACLE_TIMEOUT);
   try{
-    const r=await fetch(FN+'/oracle-search',{method:'POST',headers:H,
+    const r=await fetch(FN+'/oracle-search',{method:'POST',headers:fnHeaders(),
       body:JSON.stringify({query:q,exclude_ids:exclude}),signal:ctrl.signal});
+    if(r.status===410){ setPaused(true); return {paused:true}; } /* switched off server-side: fall back to the paused page */
     if(!r.ok) throw new Error('http '+r.status);
     return await r.json(); /* throws if the body isn't JSON (e.g. a gateway error page) */
   }finally{ clearTimeout(t); }
@@ -687,9 +722,21 @@ async function ask(q){
   currentQuery=q; seen=[];
   plsbl('question_submitted');
   loading();
-  const data=await searchOracle(q,seen);
-  busy=false;
-  logAsk({event:'ask',question:q,answer_id:(data&&data.answer&&data.answer.id)||null,theme_id:(data&&data.theme&&data.theme.id)||null,crisis:!!(data&&data.crisis),risk_to_others:!!(data&&data.risk_to_others),weak_match:!!(data&&data.weak_match)});
+  /* weaving takes 10-20s: say what's happening so it never looks stuck */
+  const slow=WEAVE_ON?setTimeout(()=>{if(busy&&res)res.innerHTML='<div class="h">weaving together what men here have said<span class="cursor"></span></div>';},3500):null;
+  /* the engine (safety, resources, one man's answer) and the weave run side by side */
+  const [data,w]=await Promise.all([searchOracle(q,seen), WEAVE_ON?fetchWeave(q):Promise.resolve(null)]);
+  busy=false; if(slow)clearTimeout(slow);
+  if(data&&data.paused){res.innerHTML='';return;}
+  const mode=(w&&w.mode)||'off';
+  CURRENT_SITUATION=(w&&w.situation)||null;
+  logAsk({event:'ask',question:q,answer_id:(data&&data.answer&&data.answer.id)||null,theme_id:(data&&data.theme&&data.theme.id)||null,crisis:!!(data&&data.crisis),risk_to_others:!!(data&&data.risk_to_others),weak_match:!!(data&&data.weak_match),detail:{weave:mode}});
+  /* safety always wins: a crisis or risk-to-others question gets the signed-off v15 path, never a weave */
+  if(data&&!data.error&&!data.crisis&&!data.risk_to_others){
+    if(mode==='woven'&&w.reflection&&w.sources&&w.sources.length) return renderWoven(data,w);
+    if(mode==='thin'&&w.sources&&w.sources.length) return renderThin(data,w);
+    if(mode==='resources_only') return renderResourcesOnly(data,w);
+  }
   render(data);
 }
 async function another(){
@@ -759,18 +806,24 @@ function render(data){
   const a=document.createElement('div');a.className='a';res.appendChild(a);
   typeInto(a,'“'+ans.text+'”',()=>{
     plsbl('answer_served',{props:{answer_theme:(theme.name||'unknown')}});
-    /* 3 — feedback row, BEFORE the resources: Yes / Ask a different question */
+    renderAfter(ans.id,theme,resources);
+  });
+}
+/* everything under an answer: vote, ask again, contribute, three things, support finder, black book */
+function renderAfter(ansId,theme,resources,opts){
+    opts=opts||{};
     /* 3 — "did this land?" is the primary reaction now (the old "Yes/more" path was removed 21 Jun — the vote covers sentiment) */
-    renderLand(currentQuery, ans.id);
+    if(!opts.noVote) renderLand(currentQuery, ansId);
     /* navigation: ask a different question */
     const ag=document.createElement('div');ag.className='again';
     ag.innerHTML='<span class="yes" data-a="new">Ask a different question</span>';
     ag.querySelector('[data-a="new"]').onclick=()=>{goHome();focusAsk();};
     res.appendChild(ag);
     /* 4 — the bridge line into sharing (collapsible contribute) */
-    renderContribute(theme.id);
+    renderContribute(theme&&theme.id);
     /* 5 — Three things to stay with you */
-    if(resources.length){
+    const ans={id:ansId};
+    if(resources&&resources.length){
       const rl=document.createElement('div');rl.className='reslist';
       const rh=document.createElement('div');rh.className='rh';rh.textContent='Three things to stay with you';rl.appendChild(rh);
       resources.forEach(r=>{
@@ -785,11 +838,168 @@ function render(data){
       res.appendChild(rl);
       logAsk({event:'resources_shown',question:currentQuery,answer_id:ans.id,detail:{resources:resources.map(r=>({name:r.name,slot:r.slot||null}))}});
     }
+    const sf=document.createElement('div');sf.className='sfind';res.appendChild(sf);
+    renderSupportFinder(sf,opts.situation||CURRENT_SITUATION||null,'answer');
     const dir=document.createElement('div');dir.className='dir';
     dir.innerHTML='<span class="ulink">browse all the experience shares &amp; the black book</span>';
     dir.firstChild.onclick=()=>openGetStrength();
     res.appendChild(dir);
+}
+
+/* ===================== WOVEN ANSWERS (Tier 2, Oct 2026) =====================
+   Server-side switches live in Supabase public.oracle_config (ask_enabled, weave_enabled).
+   ?preview=<key> lets Sam test the whole flow before the switches are flipped. */
+let WEAVE_ON=false, PREVIEW=null, CURRENT_SITUATION=null;
+try{const p=new URLSearchParams(location.search).get('preview');if(p){sessionStorage.setItem('dsPreview',p);}PREVIEW=sessionStorage.getItem('dsPreview');}catch(e){}
+function fnHeaders(){return PREVIEW?Object.assign({},H,{'x-weave-preview':PREVIEW}):H;}
+function setPaused(on){document.body.classList.toggle('paused',!!on);}
+async function loadSwitches(){
+  let ask=false;
+  try{
+    const r=await fetch(SB_URL+'/rest/v1/oracle_config?select=key,value',{headers:H});
+    const rows=r.ok?await r.json():[];
+    rows.forEach(x=>{if(x.key==='ask_enabled')ask=x.value===true;if(x.key==='weave_enabled')WEAVE_ON=x.value===true;});
+  }catch(e){}
+  if(PREVIEW){ask=true;WEAVE_ON=true;}
+  setPaused(!ask);
+  if(ask)startRoll();
+}
+const WEAVE_TIMEOUT=45000; /* 50-question check, 10 Oct: avg 16s, worst 29s */
+async function fetchWeave(q){
+  const ctrl=new AbortController();const t=setTimeout(()=>ctrl.abort(),WEAVE_TIMEOUT);
+  try{
+    const r=await fetch(FN+'/oracle-weave',{method:'POST',headers:fnHeaders(),body:JSON.stringify({query:q,session_token:SESSION_TOKEN}),signal:ctrl.signal});
+    return r.ok?await r.json():null;
+  }catch(e){return null;}finally{clearTimeout(t);}
+}
+/* the survey question each man was answering, shown above his words */
+const SURVEY_Q={
+  most_lost:"When have you felt most lost, ashamed, or like you were getting it badly wrong, and what did you do?",
+  advice_changed:"What's one piece of advice that actually changed the way you live?",
+  becoming:"What kind of man are you trying to become?",
+  wish_conversation:"What's the conversation you most wish you could have, and with whom?",
+  rule:"What's the one rule, principle, or hard-won piece of wisdom you actually live by as a man?",
+  proud_moment:"What's the moment you're most proud of as a man, the one nobody gave you credit for?",
+  dad_surprise:"What's the best thing about being a father that nobody warned you about?",
+  the_man:"Who's the man who changed how you see yourself, and what did he do?",
+  one_story:"What's the experience that has most shaped the man you've become, and why?",
+  belief_wrong:"What's something you believed about being a man that turned out to be wrong?",
+  pass_on:"What would you want to pass on to a younger man who's where you were once?",
+  children_know:"What's the most important thing you'd want your children to know?",
+  younger_self:"What would you tell your younger self?"
+};
+function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));}
+function srcCard(s,phrases){
+  let h=esc(s.text);
+  (phrases||[]).forEach(p=>{const e=esc(p);if(e&&h.indexOf(e)>-1)h=h.split(e).join('<mark>'+e+'</mark>');});
+  const sq=SURVEY_Q[s.question_key];
+  const demo=(s.demographic||'').replace(/,\s*/g,' · ').replace(/-/g,'–');
+  return '<div class="src" id="src-'+s.id+'" tabindex="-1">'+(sq?'<div class="sq"><b>&gt;</b> '+esc(sq)+'</div>':'')+
+    '<div class="t">'+h+'</div><div class="meta">'+(demo?esc(demo)+' · ':'')+'his own words, unedited</div></div>';
+}
+function renderQuestionLine(){const ql=document.createElement('div');ql.className='qline';ql.textContent='> '+currentQuery;res.appendChild(ql);}
+function renderWoven(data,w){
+  res.innerHTML='';
+  renderQuestionLine();
+  const n=w.sources.length;
+  const lab=document.createElement('div');lab.className='wlabel';
+  lab.innerHTML='<span class="dot"></span>woven from what '+n+' men here shared <span class="beta">beta</span>';
+  res.appendChild(lab);
+  /* highlight each man's exact words; tap one to jump to his full answer */
+  let body=esc(w.reflection);
+  (w.quotes||[]).forEach(q=>{
+    const e=esc(q.text);const quoted='&quot;'+e+'&quot;';
+    body=body.split(quoted).join('&quot;<span class="q" role="button" tabindex="0" data-src="'+q.source_id+'">'+e+'</span>&quot;');
   });
+  const p=document.createElement('p');p.className='woven';p.innerHTML=body;res.appendChild(p);
+  plsbl('answer_served',{props:{answer_theme:'woven'}});
+  renderLand(currentQuery, w.sources[0].id);
+  const men=document.createElement('div');men.className='men';
+  men.innerHTML='<div class="mh">the men it&#8217;s made from</div><div class="ms">their full answers, exactly as they wrote them</div><div class="cards">'+
+    w.sources.map(s=>srcCard(s,(w.quotes||[]).filter(q=>q.source_id===s.id).map(q=>q.text))).join('')+'</div>';
+  res.appendChild(men);
+  res.querySelectorAll('.woven .q').forEach(el=>{
+    const go=()=>{res.querySelectorAll('.q.on,.src.on').forEach(x=>x.classList.remove('on'));
+      res.querySelectorAll('.q[data-src="'+el.dataset.src+'"]').forEach(x=>x.classList.add('on'));
+      const c=document.getElementById('src-'+el.dataset.src);if(!c)return;c.classList.add('on');
+      c.scrollIntoView({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'center'});
+      logAsk({event:'weave_quote_click',question:currentQuery,answer_id:+el.dataset.src});};
+    el.addEventListener('click',go);el.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();go();}});
+  });
+  w.sources.forEach(s=>seen.push(s.id));
+  renderAfter(w.sources[0].id,data.theme,data.resources,{noVote:true});
+}
+function renderThin(data,w){
+  res.innerHTML='';
+  renderQuestionLine();
+  const lab=document.createElement('div');lab.className='wlabel';lab.textContent='the closest man';res.appendChild(lab);
+  const p=document.createElement('p');p.className='honest';
+  p.textContent="no one here has asked quite this yet, so there's no woven answer. here's one man on something close. if it doesn't fit, you can add your own below.";
+  res.appendChild(p);
+  const c=document.createElement('div');c.className='cards';c.innerHTML=srcCard(w.sources[0],[]);res.appendChild(c);
+  seen.push(w.sources[0].id);
+  plsbl('answer_served',{props:{answer_theme:'thin'}});
+  renderAfter(w.sources[0].id,data.theme,data.resources);
+}
+function renderResourcesOnly(data,w){
+  res.innerHTML='';
+  renderQuestionLine();
+  const lab=document.createElement('div');lab.className='wlabel';lab.textContent='support first';res.appendChild(lab);
+  const p=document.createElement('p');p.className='honest';
+  p.textContent=w.topic==='child_abuse_concern'
+    ?"this is about a child's safety, so there's no woven answer here. if a child is in danger right now, call 999. these people know this ground:"
+    :"this is a question about a child and sex, so there's no woven answer here, and no man in the Dadosphere has written about it yet. these people know this ground:";
+  res.appendChild(p);
+  const sf=document.createElement('div');sf.className='sfind';sf.style.borderTop='none';sf.style.paddingTop='0';res.appendChild(sf);
+  renderSupportList(sf,w.topic);
+  plsbl('resources_only_served',{props:{topic:w.topic}});
+  const ag=document.createElement('div');ag.className='again';
+  ag.innerHTML='<span class="yes" data-a="new">Ask a different question</span>';
+  ag.querySelector('[data-a="new"]').onclick=()=>{goHome();focusAsk();};
+  res.appendChild(ag);
+  const more=document.createElement('div');more.className='sfind';res.appendChild(more);
+  renderSupportFinder(more,null,'resources_only');
+}
+
+/* ===================== SUPPORT FINDER (gate 1B) =====================
+   Situations and services live in Supabase public.support_services (verified 9 Oct 2026). */
+let SUPPORT=null;
+async function loadSupport(){
+  if(SUPPORT)return SUPPORT;
+  try{
+    const r=await fetch(SB_URL+'/rest/v1/support_services?select=situation_key,situation_label,situation_sort,in_dropdown,sort,name,what,contact,hours,url&order=situation_sort,sort',{headers:H});
+    SUPPORT=r.ok?await r.json():[];
+  }catch(e){SUPPORT=[];}
+  return SUPPORT;
+}
+async function renderSupportList(box,key){
+  const rows=(await loadSupport()).filter(r=>r.situation_key===key);
+  const l=document.createElement('div');l.className='sfl';
+  rows.forEach(r=>{
+    const it=document.createElement('div');it.className='sfi';
+    const a=document.createElement('a');a.href=r.url;a.target='_blank';a.rel='noopener';a.textContent=r.name;
+    a.addEventListener('click',()=>{plsbl('resource_link_clicked',{props:{resource_name:r.name}});logAsk({event:'resource_click',question:currentQuery||null,detail:{name:r.name,where:'support_finder',situation:key}});});
+    it.appendChild(a);
+    const w=document.createElement('div');w.className='sfw';w.textContent=r.what;it.appendChild(w);
+    const c=document.createElement('div');c.className='sfc';c.textContent=r.contact+(r.hours?' · '+r.hours:'');it.appendChild(c);
+    l.appendChild(it);
+  });
+  box.appendChild(l);
+}
+async function renderSupportFinder(box,preselect,where){
+  const rows=await loadSupport();
+  const seenK={},sits=[];
+  rows.forEach(r=>{if(r.in_dropdown&&!seenK[r.situation_key]){seenK[r.situation_key]=1;sits.push(r);}});
+  if(!sits.length)return;
+  box.innerHTML='<div class="sfh">find the right people for your situation</div>';
+  const sel=document.createElement('select');sel.setAttribute('aria-label','choose your situation');
+  sel.innerHTML='<option value="">what are you dealing with?</option>'+sits.map(s=>'<option value="'+esc(s.situation_key)+'">'+esc(s.situation_label)+'</option>').join('');
+  box.appendChild(sel);
+  const out=document.createElement('div');box.appendChild(out);
+  const show=k=>{out.innerHTML='';if(!k)return;renderSupportList(out,k);
+    const n=document.createElement('div');n.className='sfnote';n.textContent='in danger right now? call 999. need to talk tonight? Samaritans, 116 123, any time.';out.appendChild(n);};
+  sel.addEventListener('change',()=>{show(sel.value);if(sel.value){plsbl('support_finder_used',{props:{situation:sel.value}});logAsk({event:'support_finder',question:currentQuery||null,detail:{situation:sel.value,where:where}});}});
+  if(preselect){sel.value=preselect;show(preselect);}
 }
 
 const THEME_Q={
@@ -1033,8 +1243,9 @@ async function loadStats(){
 function routeHash(){var h=(location.hash||'').replace('#','');if(h==='faq'||h==='support'||h==='feedback'){openPanel(h);}}
 window.addEventListener('hashchange',routeHash);
 
-/* boot */
-if(!document.body.classList.contains('paused'))startRoll();
+/* boot: the page starts paused (safe default) and only opens if the server-side switch says so */
+loadSwitches();
+renderSupportFinder(document.getElementById('sfind-panel'),null,'support_panel');
 sizeAsk();
 loadStats();
 wireFeedbackPanel();
