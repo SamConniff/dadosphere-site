@@ -369,7 +369,7 @@
     The Dadosphere is 100% anonymous.<br>
     <span class="mono">Cookies are for monsters.</span>
   </div>
-  <div class="exptline">a DIY experiment, still early &mdash; <span class="ulink" onclick="openFeedback()">tell us what&#8217;s working &rarr;</span></div>
+  <div class="exptline">a DIY project made by one man and his Claude, to help other men like him who might have no one to ask about their late-night worries.<br><span class="ulink" onclick="openFeedback()">tell us what&#8217;s working &rarr;</span></div>
 </div>
 </div><!-- /oracle -->
 
@@ -424,7 +424,7 @@
       <li>This is not an advice or support service. It's an experiment in authentic intelligence: a searchable database of honest insight, lived experience and real support services.</li>
       <li>Every answer is submitted by a real man and human-moderated before it's matched to one of 10 themes research links to men's mental health.</li>
       <li class="pausedonly">New questions are paused for now while we catch up on the ones men have already asked. Everything men have shared so far is here to search, by theme or by word.</li>
-      <li class="liveonly">Some answers are now woven together from what several men here have said (beta). Every highlighted phrase is a man's exact words, and their full answers sit right underneath. Nothing is invented, and it never gives advice.</li>
+      <li class="liveonly">Some answers are now woven together from what several men here have said (beta). Every highlighted phrase is a man's exact words, and their full answers sit right underneath. Nothing is invented, and it never gives advice. The weaving is done by Claude Opus 5.5, made by Anthropic, so your question is sent to them, anonymously, to write it.</li>
       <li>You can submit questions, answers, or suggest services. A human moderates everything before it goes anywhere near the site.</li>
       <li>The Dadosphere is 100% anonymous. Answers are stored on a UK server with no personal identifying information, ever.</li>
     </ol>
@@ -565,6 +565,7 @@ const SESSION_TOKEN=(Math.random().toString(36).slice(2)+Date.now().toString(36)
 function logAsk(o){try{fetch(SB_URL+'/rest/v1/ask_log',{method:'POST',headers:Object.assign({},H,{Prefer:'return=minimal'}),body:JSON.stringify(Object.assign({session_token:SESSION_TOKEN},o))}).catch(function(){});}catch(e){}}
 /* Founding Dads — Five Questions (form GYKhzxwT, confirmed live by Sam 15 Jun). Answer 5 Qs + responder signup. */
 const GIVE_STRENGTH_URL='https://sam774431.typeform.com/to/GYKhzxwT';
+let LIVE_ANSWERS=null; /* approved answers, for the weaving message */
 let LIVE_MEN=null;  /* live men count from Supabase public_stats; fills copy that quotes the number */
 
 /* ===================== ROLLING EXAMPLES ===================== */
@@ -723,10 +724,17 @@ async function ask(q){
   plsbl('question_submitted');
   loading();
   /* weaving takes 10-20s: say what's happening so it never looks stuck */
-  const slow=WEAVE_ON?setTimeout(()=>{if(busy&&res)res.innerHTML='<div class="h">weaving together what men here have said<span class="cursor"></span></div>';},3500):null;
+  /* Sam, 11 Oct: show our working while it weaves, instead of an "AI generated" badge */
+  const nAns=LIVE_ANSWERS?LIVE_ANSWERS.toLocaleString():'thousands of';
+  const steps=['mining '+nAns+' real answers, given freely by men like you',
+    'now using Claude Opus 5.5, the most ethical AI we could find, to weave them into an answer to your question',
+    'their own words go in full underneath, so you can see our working'];
+  const showStep=i=>{if(busy&&res)res.innerHTML=steps.slice(0,i+1).map((x,j)=>'<div class="h"'+(j?' style="margin-top:6px"':'')+'>'+x+(j===i?'<span class="cursor"></span>':'')+'</div>').join('');};
+  const slowT=WEAVE_ON?[setTimeout(()=>showStep(0),2500),setTimeout(()=>showStep(1),7000),setTimeout(()=>showStep(2),13000)]:[];
+  const slow=slowT.length?{clear:()=>slowT.forEach(clearTimeout)}:null;
   /* the engine (safety, resources, one man's answer) and the weave run side by side */
   const [data,w]=await Promise.all([searchOracle(q,seen), WEAVE_ON?fetchWeave(q):Promise.resolve(null)]);
-  busy=false; if(slow)clearTimeout(slow);
+  busy=false; if(slow)slow.clear();
   if(data&&data.paused){res.innerHTML='';return;}
   const mode=(w&&w.mode)||'off';
   CURRENT_SITUATION=(w&&w.situation)||null;
@@ -1230,6 +1238,7 @@ async function loadStats(){
     if(s){
       const a=document.getElementById('stat-answers'),m=document.getElementById('stat-men'),cm=document.getElementById('cite-men'),pm=document.getElementById('pill-men');
       if(s.men!=null)LIVE_MEN=+s.men;
+      if(s.answers!=null)LIVE_ANSWERS=+s.answers;
       if(a&&s.answers!=null)a.textContent=(+s.answers).toLocaleString();
       if(m&&s.men!=null)m.textContent=(+s.men).toLocaleString();
       if(cm&&s.men!=null)cm.textContent=(+s.men).toLocaleString();
