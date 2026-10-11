@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>Sunday tea · Dadosphere</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=JetBrains+Mono:wght@700;800&display=swap" rel="stylesheet">
+<style>
+  /* Sam's Sunday review: the one human gate between a man's answer and the public site.
+     The key lives in the URL fragment (#k=...), so it never reaches a server log. */
+  :root{--g:#FF2D87;--mono:'IBM Plex Mono',monospace;--monb:'JetBrains Mono',monospace;--ink1:#999;--ink2:#888;--ink3:#555;--ink4:#2a2a2a}
+  *{margin:0;padding:0;box-sizing:border-box}
+  html,body{background:#000}
+  body{color:#fff;font-family:var(--mono);line-height:1.6;padding:34px 16px 60px;max-width:720px;margin:0 auto}
+  h1{font-family:var(--monb);font-weight:800;font-size:24px;margin-bottom:6px}
+  .sub{color:var(--ink1);font-size:13.5px;margin-bottom:30px}
+  h2{font-family:var(--monb);font-size:14px;color:var(--ink2);text-transform:lowercase;margin:38px 0 14px;border-top:1px solid var(--ink4);padding-top:22px}
+  .card{border:1px solid var(--ink4);padding:18px;margin-bottom:14px}
+  .q{color:var(--ink2);font-size:12px;margin-bottom:10px}
+  .a{font-size:15px;line-height:1.6;white-space:pre-wrap;overflow-wrap:break-word}
+  .flag{margin-top:12px;font-size:12px;color:var(--g)}
+  .row{display:flex;gap:22px;margin-top:16px;font-size:13px;align-items:center;flex-wrap:wrap}
+  .btn{cursor:pointer;user-select:none;text-decoration:underline;text-decoration-thickness:2px;text-underline-offset:5px;background:none;border:0;color:#fff;font:inherit}
+  .yes{text-decoration-color:var(--g)}
+  .no{color:var(--ink1);text-decoration-color:var(--ink3)}
+  .done{color:var(--ink1);font-size:12.5px}
+  .card.decided{opacity:.45}
+  .msg{color:var(--ink1);font-size:13.5px}
+</style>
+</head>
+<body>
+<h1>sunday tea</h1>
+<div class="sub" id="sub">one man and his Claude. loading&hellip;</div>
+<div id="pending"></div>
+<h2>five men from the archive, for your tea</h2>
+<div id="archive"></div>
+<script>
+const FN='https://qbhdcajdspczccrmbjlx.supabase.co/functions/v1/sunday-review';
+const K=new URLSearchParams(location.hash.slice(1)).get('k')||'';
+const esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+async function call(body){const r=await fetch(FN,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({k:K,...body})});return {ok:r.ok,j:await r.json().catch(()=>({}))};}
+async function decide(id,decision,card){
+  card.querySelector('.row').innerHTML='<span class="done">&hellip;</span>';
+  const {ok,j}=await call({action:'decide',id,decision});
+  card.classList.add('decided');
+  card.querySelector('.row').innerHTML='<span class="done">'+(ok?(decision==='approve'?'published. thank you, from him.':'kept private.'):'that didn&#8217;t save: '+esc(j.error||'try again'))+'</span>';
+}
+async function load(){
+  const sub=document.getElementById('sub');
+  if(!K){sub.textContent='this page needs your Sunday link.';return;}
+  const {ok,j}=await call({action:'list'});
+  if(!ok){sub.textContent='that link didn’t work. use the one in your Sunday email.';return;}
+  const n=j.pending.length;
+  sub.textContent=n?(n===1?'one man':n+' men')+' wrote in. nothing goes public until you say so.':'no new answers this week. just the archive, and the tea.';
+  const P=document.getElementById('pending');
+  j.pending.forEach(p=>{
+    const c=document.createElement('div');c.className='card';
+    c.innerHTML=(p.question?'<div class="q">&gt; '+esc(p.question)+'</div>':'')+'<div class="a">'+esc(p.text)+'</div>'+
+      (p.safety?'<div class="flag">crisis or harm words. he&#8217;s anonymous, so no one can reach him. usually best kept private.</div>':'')+
+      (p.pii?'<div class="flag">may name or identify someone. keep private, or ask Claude to trim it.</div>':'')+
+      '<div class="row"><button class="btn yes">publish</button><button class="btn no">keep private</button></div>';
+    c.querySelector('.yes').onclick=()=>decide(p.id,'approve',c);
+    c.querySelector('.no').onclick=()=>decide(p.id,'reject',c);
+    P.appendChild(c);
+  });
+  const A=document.getElementById('archive');
+  j.archive.forEach(a=>{const c=document.createElement('div');c.className='card';c.innerHTML=(a.question?'<div class="q">&gt; '+esc(a.question)+'</div>':'')+'<div class="a">'+esc(a.text)+'</div>';A.appendChild(c);});
+}
+load();
+</script>
+</body>
+</html>

@@ -255,6 +255,14 @@
   .card .qq{color:var(--ink2);font-size:12px;line-height:1.5;margin-bottom:10px;overflow-wrap:break-word}
   .card .aa{color:#fff;font-size:14px;line-height:1.55;margin-bottom:12px;overflow-wrap:break-word}
   .card .hm{color:var(--ink3);font-size:11px;border-top:1px solid var(--ink4);padding-top:9px;margin-top:auto}
+  .card .addy{float:right;color:var(--ink1);cursor:pointer;user-select:none}
+  .card .addy:hover{color:#fff;text-decoration:underline;text-decoration-color:var(--g);text-underline-offset:4px}
+  .card .addf{margin-top:12px}
+  .card .addf textarea{background:transparent;border:none;outline:none;border-bottom:1px solid var(--ink4);color:#fff;font-family:var(--mono);font-size:14px;width:100%;resize:none;line-height:1.6}
+  .card .addf textarea:focus{border-bottom-color:var(--ink2)}
+  .card .addf textarea::placeholder{color:var(--ink3)}
+  .card .addf .cgo{margin-top:10px;font-size:12.5px;cursor:pointer;width:fit-content;text-decoration:underline;text-decoration-color:var(--g);text-decoration-thickness:2px;text-underline-offset:5px}
+  .card .addf .cmsg{margin-top:8px;font-size:12px;color:var(--ink1)}
   /* resource cards (Directory) */
   .rcard .rn{font-family:var(--monb);font-weight:700;font-size:15px;margin-bottom:6px}
   .rcard .rn a{color:#fff}
@@ -1050,9 +1058,8 @@ function renderContribute(themeId){
     if(txt.length<10){cmsg.textContent='a bit more — give the next man something to go on.';return;}
     cmsg.textContent='…';
     try{
-      const r=await fetch(FN+'/contribute',{method:'POST',headers:H,body:JSON.stringify({answer_text:txt,question_key:map[0],theme_id:themeId||null})});
-      const j=await r.json();
-      if(r.ok&&j.ok){plsbl('contribution_submitted');cmsg.textContent='got it. a human reads it before it ever goes public. thank you.';ta.value='';ta.disabled=true;cgo.style.display='none';}
+      const res=await sendContribution(txt,map[0],themeId,'answer');
+      if(res.ok){plsbl('contribution_submitted');cmsg.innerHTML=THANKS+(res.crisis?CRISIS_NOTE:'');ta.value='';ta.disabled=true;cgo.style.display='none';}
       else{cmsg.textContent="that didn't go through — try again, or email sam@thedadosphere.com";}
     }catch(e){cmsg.textContent="that didn't go through — try again, or email sam@thedadosphere.com";}
   };
@@ -1136,7 +1143,7 @@ function switchTab(t){
 const THEMES=[[0,"all"],[1,"masculinity & identity"],[2,"fatherhood & family"],[3,"struggle & shame"],[4,"what helped"],[5,"connection & isolation"],[6,"legacy & purpose"],[7,"becoming"],[8,"body & health"],[9,"work & money"],[10,"humour"]];
 let dTheme=0,dOffset=0,dq='',dirInit=false,dirLoaded=false;
 /* fuller, best-expressed answers lead: order by length desc (proxy for substance) so the top ones land */
-const DIR_SEL='answers?select=answer_text,themes(name),questions(canonical)&curation_status=eq.approved&answer_text=not.is.null&order=answer_len.desc';
+const DIR_SEL='answers?select=answer_text,question_key,themes(name),questions(canonical)&curation_status=eq.approved&answer_text=not.is.null&order=answer_len.desc';
 function initAnswers(){
   dirInit=true;
   const chips=document.getElementById('chips');
@@ -1155,6 +1162,37 @@ async function liveCount(){
     const total=cr.split('/')[1];
     if(total&&!isNaN(+total))document.getElementById('ans-count').textContent=(+total).toLocaleString()+' answers and counting';
   }catch(e){}
+}
+/* Gallery "add yours" (Sam, 11 Oct): a man can answer the same question on any card. It joins
+   the same queue as every contribution; Sam reads each one himself on a Sunday before it goes public. */
+const OPEN_KEYS=new Set(['advice_changed','becoming','belief_wrong','best_thing','body_relationship','children_know','dad_surprise','hardest_thing','most_lost','one_story','pass_on','proud_moment','rule','the_man','wish_conversation','worst_advice','younger_self']);
+const THANKS='got it. Sam reads every one himself before it goes public. thank you.';
+const CRISIS_NOTE='<div style="margin-top:10px">if any of that is still with you: Samaritans 116 123, any time, or text SHOUT to 85258.</div>';
+async function sendContribution(txt,key,themeId,via){
+  const r=await fetch(FN+'/contribute',{method:'POST',headers:H,body:JSON.stringify({answer_text:txt,question_key:key,theme_id:themeId||null,via})});
+  const j=await r.json().catch(()=>({}));
+  return {ok:r.ok&&j.ok,crisis:!!j.crisis};
+}
+function addYours(card,key){
+  const hm=card.querySelector('.hm');
+  const link=document.createElement('span');link.className='addy';link.textContent='+ add yours';
+  hm.appendChild(link);
+  link.onclick=()=>{
+    link.remove();plsbl('gallery_add_clicked');
+    const f=document.createElement('div');f.className='addf';
+    f.innerHTML='<textarea rows="3" maxlength="5000" placeholder="your answer, anonymous" aria-label="your answer"></textarea><div class="cgo">[submit]</div><div class="cmsg"></div>';
+    card.appendChild(f);
+    const ta=f.querySelector('textarea'),go=f.querySelector('.cgo'),msg=f.querySelector('.cmsg');ta.focus();
+    go.onclick=async()=>{
+      const txt=ta.value.trim();
+      if(txt.length<10){msg.textContent='a bit more. give the next man something to go on.';return;}
+      msg.textContent='…';
+      try{const res=await sendContribution(txt,key,null,'gallery');
+        if(res.ok){plsbl('contribution_submitted');msg.innerHTML=THANKS+(res.crisis?CRISIS_NOTE:'');ta.disabled=true;go.style.display='none';}
+        else msg.textContent="that didn't go through. try again, or email sam@thedadosphere.com";
+      }catch(e){msg.textContent="that didn't go through. try again, or email sam@thedadosphere.com";}
+    };
+  };
 }
 async function loadDir(){
   document.getElementById('more').style.display='none';
@@ -1176,6 +1214,7 @@ async function loadDir(){
       hm.textContent=(row.themes&&row.themes.name?row.themes.name.toLowerCase():'verbatim')+' · one of '+(LIVE_MEN?LIVE_MEN.toLocaleString():'500+')+' men';
       if(qq.textContent)d.appendChild(qq);
       d.appendChild(aa);d.appendChild(hm);
+      if(qq.textContent&&OPEN_KEYS.has(row.question_key))addYours(d,row.question_key);
       grid.appendChild(d);
     });
     if(rows.length===12)document.getElementById('more').style.display='flex';
